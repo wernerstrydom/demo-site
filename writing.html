@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Writing - Werner Strydom</title>
+<meta name="description" content="Technical writing on infrastructure, security, and systems engineering">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>Writing</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="writing.html">Writing</a></li>
+<li><a href="lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<article>
+<h2>Configuration Management Doesn't Guarantee Predictable Outcomes</h2>
+<p><time>2026-02-11</time></p>
+
+<p>Configuration management tools enforce identical configuration files across servers. Ansible, Puppet, Chef, and Salt excel at this. The problem: identical configurations don't guarantee identical behavior.</p>
+
+<p>Two servers with identical nginx.conf files behave differently when one runs kernel 5.4 and the other runs 5.15. Network buffer handling changed. TCP congestion control algorithms differ. The configuration is identical. The behavior is not.</p>
+
+<p>Filesystem choice matters. XFS handles small files differently than ext4. ZFS has different I/O patterns than both. The application configuration is identical. The performance characteristics are not.</p>
+
+<p>CPU architecture influences timing. An ARM server and an x86 server with identical configurations execute instructions differently. Memory ordering guarantees differ. Cache behavior varies.</p>
+
+<p>Configuration management has value. It reduces manual work. It documents intent. It prevents configuration drift. But it doesn't model the relationships between configuration, system properties, and behavior.</p>
+
+<p>Testing actual behavior matters more than comparing configuration files. Load testing reveals performance differences. Chaos engineering exposes failure modes. Integration testing catches dependency issues.</p>
+
+<p>The question is not "are configurations identical" but "do systems behave identically under the same conditions." Configuration management answers the first question. Testing answers the second.</p>
+</article>
+
+<hr>
+
+<article>
+<h2>Compliance Frameworks Measure Activity, Not Risk Reduction</h2>
+<p><time>2026-01-15</time></p>
+
+<p>PCI-DSS, SOC 2, ISO 27001, and HIPAA measure whether you performed required activities. They don't measure whether those activities reduced your actual risk.</p>
+
+<p>Example: patch management requirements specify applying patches within 30 days of release. This is measurable. Auditors verify patch application dates. Organizations optimize for this metric.</p>
+
+<p>What the metric doesn't capture: whether the vulnerability was exploitable in your environment, whether compensating controls already mitigated the risk, whether the patch introduced new vulnerabilities, or whether testing occurred before deployment.</p>
+
+<p>Result: patches get applied to meet deadlines without understanding impact. Systems break. Workarounds accumulate. The compliance metric is green. The risk is unchanged or increased.</p>
+
+<p>Another example: firewall requirements. Compliance requires network segmentation and firewall rules. Auditors verify the firewall exists and rules are documented. The metric is satisfied.</p>
+
+<p>What the metric doesn't capture: whether the firewall rules actually prevent the attack paths that matter in your environment, whether exceptions have created holes, whether monitoring detects violations, or whether the rules are tested.</p>
+
+<p>Compliance is a floor, not a ceiling. Meeting requirements means you did the minimum. Security requires understanding your threat model and risk surface, then addressing them even when compliance doesn't require it.</p>
+
+<p>Ask different questions. Not "did we patch within 30 days" but "what is the exploitability and impact of this vulnerability in our specific environment." Not "do we have a firewall" but "what attack paths exist and how do we detect them."</p>
+
+<p>Compliance and security are related but distinct. Optimizing for compliance metrics doesn't optimize for risk reduction.</p>
+</article>
+
+<hr>
+
+<article>
+<h2>Infrastructure Definitions Have Different Properties Than Application Code</h2>
+<p><time>2025-12-20</time></p>
+
+<p>Terraform, CloudFormation, and Pulumi treat infrastructure definitions as code. This provides version control, code review, and automation. The analogy breaks down when you consider failure modes and operational constraints.</p>
+
+<p>Application code runs in an environment. Infrastructure code creates the environment. When application code fails, you restart the process. When infrastructure code fails, you might not have an environment to run anything.</p>
+
+<p>Testing differs. Application code can be unit tested with mocks. Infrastructure code must be tested against real cloud APIs with real eventual consistency, real rate limits, and real quota errors. Mocking AWS APIs doesn't catch the issues that matter.</p>
+
+<p>Deployment differs. Application deployments can be rolled back by restarting with the previous version. Infrastructure rollbacks might involve DNS propagation delays, load balancer health check periods, or database schema migrations. The rollback path is not symmetric with the deployment path.</p>
+
+<p>State management differs. Application code is typically stateless or uses external state stores. Infrastructure code manages stateful resources where deletion loses data. The blast radius of mistakes is larger.</p>
+
+<p>Error handling differs. Application errors affect requests. Infrastructure errors affect the platform. A bug in application code might return 500 errors. A bug in infrastructure code might delete production databases.</p>
+
+<p>The better model: infrastructure as data with code to interpret it. The data describes desired state in a declarative format. The code handles state transitions, error recovery, and rollback logic. This separation makes testing easier and failures more contained.</p>
+
+<p>Infrastructure as code has value. But treating it exactly like application code ignores the different failure modes.</p>
+</article>
+
+<hr>
+
+<article>
+<h2>Monitoring Shows Symptoms, Not Root Causes</h2>
+<p><time>2025-11-10</time></p>
+
+<p>Prometheus, Datadog, and CloudWatch collect metrics and generate alerts. They tell you response time increased or error rate spiked. They don't tell you why.</p>
+
+<p>The gap between symptom and cause is where incident response time goes. You know response time increased. You need to determine if the cause is database query performance, network latency, upstream service degradation, resource exhaustion, or something else.</p>
+
+<p>Monitoring shows effects. Finding causes requires tracing through the system. This requires understanding relationships between components that monitoring tools don't model.</p>
+
+<p>Common response: add more metrics. This helps but doesn't solve the fundamental problem. More metrics means more data to correlate. The relationship between metrics matters more than the metrics themselves.</p>
+
+<p>Distributed tracing helps by showing request paths through services. Jaeger and Zipkin visualize these paths. But traces still require knowing what to look for. The trace shows what happened. Understanding why requires knowing how the system should work.</p>
+
+<p>Example: response time increased. The trace shows the database query took longer. Why did the query take longer? Was it query plan changes, lock contention, resource exhaustion, network issues, or something else. The trace doesn't answer this.</p>
+
+<p>The solution is designing systems for debuggability. This means structured logging with correlation IDs, clear error messages that include context, documentation of dependencies and failure modes, and runbooks for common issues.</p>
+
+<p>Monitoring is necessary but not sufficient. It tells you something is wrong. Debuggability tells you what and why.</p>
+</article>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="enhance.js" type="text/javascript"></script>
+
+</body>
+</html>

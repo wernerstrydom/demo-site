@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Lab - Werner Strydom</title>
+<meta name="description" content="Home lab hardware, network topology, and infrastructure">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>Lab</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="writing.html">Writing</a></li>
+<li><a href="lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Hardware</h2>
+
+<h3>Vintage Systems</h3>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>System</th>
+<th>Architecture</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>Power Mac G4</td>
+<td>PowerPC</td>
+<td>7400 @ 400MHz</td>
+<td>512MB</td>
+<td>Cross-platform testing</td>
+</tr>
+<tr>
+<td>SGI Indy</td>
+<td>MIPS</td>
+<td>R4600 @ 133MHz</td>
+<td>256MB</td>
+<td>Browser compatibility</td>
+</tr>
+<tr>
+<td>Sun Ultra 10</td>
+<td>SPARC</td>
+<td>UltraSPARC IIi @ 440MHz</td>
+<td>512MB</td>
+<td>Solaris testing</td>
+</tr>
+</table>
+
+<p>These systems test cross-platform compatibility and browser behavior on non-x86 architectures. They run period-appropriate operating systems and browsers for validation.</p>
+
+<h3>Production Systems</h3>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>System</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Storage</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>Server 1</td>
+<td>AMD Ryzen 9 5950X</td>
+<td>64GB DDR4</td>
+<td>2TB NVMe + 18TB HDD</td>
+<td>Virtualization, storage</td>
+</tr>
+<tr>
+<td>Server 2</td>
+<td>Intel i5-12400</td>
+<td>32GB DDR4</td>
+<td>1TB NVMe</td>
+<td>Network services</td>
+</tr>
+<tr>
+<td>Pi Cluster</td>
+<td>4x BCM2711 (Pi 4)</td>
+<td>4x 8GB</td>
+<td>4x 128GB microSD</td>
+<td>ARM testing, K8s</td>
+</tr>
+</table>
+
+<h2>Network</h2>
+
+<h3>Topology</h3>
+
+<p>The network uses VLANs for segmentation. A managed switch handles VLAN tagging. A router running pfSense provides routing, firewall, and VPN.</p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>VLAN</th>
+<th>Subnet</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>10</td>
+<td>10.0.10.0/24</td>
+<td>Management (IPMI, iDRAC)</td>
+</tr>
+<tr>
+<td>20</td>
+<td>10.0.20.0/24</td>
+<td>Production workloads</td>
+</tr>
+<tr>
+<td>30</td>
+<td>10.0.30.0/24</td>
+<td>Lab and testing</td>
+</tr>
+<tr>
+<td>40</td>
+<td>10.0.40.0/24</td>
+<td>Vintage systems</td>
+</tr>
+<tr>
+<td>50</td>
+<td>10.0.50.0/24</td>
+<td>IoT devices</td>
+</tr>
+</table>
+
+<p>Firewall rules restrict inter-VLAN traffic. Management VLAN is isolated. IoT VLAN has no inbound access from other VLANs. Lab VLAN can initiate connections but receives no unsolicited traffic.</p>
+
+<h3>Services</h3>
+
+<p><strong>DNS:</strong> Unbound with local zone for internal names. Forwards to upstream resolvers over TLS. Blocks ad domains.</p>
+
+<p><strong>DHCP:</strong> ISC DHCP with static reservations. Network boot support via PXE. Option 66 points to TFTP server.</p>
+
+<p><strong>Monitoring:</strong> Prometheus scrapes exporters on each system. Grafana visualizes metrics. Alertmanager sends notifications.</p>
+
+<p><strong>Storage:</strong> ZFS on Server 1 provides network storage via NFS and SMB. Snapshots run hourly. Replication to external drive runs daily.</p>
+
+<p><strong>VPN:</strong> WireGuard for remote access. Split tunnel configuration. DNS pushed to clients.</p>
+
+<h2>Projects</h2>
+
+<h3>Cross-Architecture Build System</h3>
+
+<p>A Docker-based build system compiles software for x86-64, ARM, PowerPC, and MIPS. It uses QEMU for emulation and cross-compilation toolchains. The system builds packages for vintage systems that no longer have official support.</p>
+
+<p>The build process runs in containers to ensure reproducibility. Each architecture has a dedicated container image with the appropriate toolchain. The Makefile orchestrates builds across architectures.</p>
+
+<h3>Automated Testing Pipeline</h3>
+
+<p>A CI/CD pipeline tests website compatibility across browsers and architectures. Virtual machines run period-appropriate browsers. Selenium captures screenshots. A comparison tool detects visual regressions.</p>
+
+<p>The pipeline runs on git push. It tests on Netscape Navigator 4, Internet Explorer 5, Mozilla 1.0, and modern browsers. The results show whether changes broke compatibility.</p>
+
+<h3>Infrastructure Monitoring</h3>
+
+<p>A custom monitoring system collects metrics from diverse systems. It supports SNMP for network equipment, SSH for Unix systems, and HTTP for modern services. The collector runs on Server 2.</p>
+
+<p>The system handles systems that can't run modern monitoring agents. It uses standard protocols available on vintage hardware. Data goes to Prometheus for storage and querying.</p>
+
+<h2>Configuration</h2>
+
+<p>Configuration management uses Ansible. Playbooks define system state. The inventory groups systems by function. Variables handle environment-specific values.</p>
+
+<p>The approach is minimal. Ansible ensures packages are installed, services are running, and configuration files are present. It doesn't manage every file. Manual configuration is documented in runbooks.</p>
+
+<p>Testing happens before deployment. A staging environment mirrors production. Changes apply to staging first. Validation includes service checks and integration tests. Production deployment happens after validation passes.</p>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="enhance.js" type="text/javascript"></script>
+
+</body>
+</html>
