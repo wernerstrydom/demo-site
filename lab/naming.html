@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Device Naming Scheme - Werner Strydom</title>
+<meta name="description" content="Hostname naming convention for lab infrastructure">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>Device Naming Scheme</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="../index.html">Home</a></li>
+<li><a href="../writing.html">Writing</a></li>
+<li><a href="../lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Format</h2>
+
+<p>Hostnames follow the pattern: <code>location-number-function-sequence</code></p>
+
+<p>Example: <code>oak02ufw01</code></p>
+
+<ul>
+<li><strong>oak</strong> - Location code (Oakland)</li>
+<li><strong>02</strong> - Rack or zone number</li>
+<li><strong>ufw</strong> - Function code (Ubuntu firewall)</li>
+<li><strong>01</strong> - Sequence number for this function</li>
+</ul>
+
+<h2>Location Codes</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Code</th>
+<th>Location</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>oak</td>
+<td>Oakland</td>
+<td>Primary lab location</td>
+</tr>
+</table>
+
+<h2>Function Codes</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Code</th>
+<th>Function</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>ufw</td>
+<td>Ubuntu Firewall</td>
+<td>Firewall/router running Ubuntu</td>
+</tr>
+<tr>
+<td>esxi</td>
+<td>ESXi Host</td>
+<td>VMware ESXi hypervisor</td>
+</tr>
+<tr>
+<td>pve</td>
+<td>Proxmox VE</td>
+<td>Proxmox virtualization host</td>
+</tr>
+<tr>
+<td>nas</td>
+<td>NAS</td>
+<td>Network attached storage</td>
+</tr>
+<tr>
+<td>sw</td>
+<td>Switch</td>
+<td>Network switch</td>
+</tr>
+<tr>
+<td>ap</td>
+<td>Access Point</td>
+<td>Wireless access point</td>
+</tr>
+</table>
+
+<h2>Rationale</h2>
+
+<p>This naming scheme provides immediate context about a device without requiring documentation lookup. The location code matters when you have multiple sites or plan to expand. The rack number helps with physical troubleshooting. The function code indicates the device's role. The sequence number distinguishes multiple devices with the same function.</p>
+
+<p>The scheme is deterministic. Given a device's purpose and location, the hostname is predictable. This reduces cognitive load when managing infrastructure.</p>
+
+<h2>Examples</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Hostname</th>
+<th>Meaning</th>
+</tr>
+<tr>
+<td>oak02ufw01</td>
+<td>Oakland, rack 2, Ubuntu firewall, first instance</td>
+</tr>
+<tr>
+<td>oak02ufw02</td>
+<td>Oakland, rack 2, Ubuntu firewall, second instance</td>
+</tr>
+<tr>
+<td>oak01esxi01</td>
+<td>Oakland, rack 1, ESXi host, first instance</td>
+</tr>
+<tr>
+<td>oak03nas01</td>
+<td>Oakland, rack 3, NAS, first instance</td>
+</tr>
+</table>
+
+<h2>DNS Configuration</h2>
+
+<p>Internal DNS uses the <code>.lab</code> TLD. Full hostnames: <code>oak02ufw01.lab</code></p>
+
+<p>DNS A records point to management interfaces. CNAME records provide service-based aliases when needed.</p>
+
+<h2>Alternatives Considered</h2>
+
+<p>Random names (mythology, planets, etc.) are memorable but don't scale. They require documentation to understand a device's purpose. They work for small deployments but break down with growth.</p>
+
+<p>UUIDs or random strings are unique but not human-readable. They require constant documentation lookup.</p>
+
+<p>Descriptive names like "firewall-primary" don't handle multiples well and lack location context.</p>
+
+<p>The structured approach trades memorability for predictability and scalability.</p>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="../enhance.js" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>oak02ufw01 - Werner Strydom</title>
+<meta name="description" content="Ubuntu firewall deployment on Sophos SG 210 hardware">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>oak02ufw01</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="../../index.html">Home</a></li>
+<li><a href="../../writing.html">Writing</a></li>
+<li><a href="../../lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Overview</h2>
+
+<p>oak02ufw01 is an Ubuntu-based firewall running on <a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> hardware. It replaced the EOL Sophos UTM firmware. The device provides routing, firewall, and VPN services for the lab network.</p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Hostname</td>
+<td>oak02ufw01.lab</td>
+</tr>
+<tr>
+<td>Hardware</td>
+<td><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a></td>
+</tr>
+<tr>
+<td>OS</td>
+<td>Ubuntu Server 24.04 LTS</td>
+</tr>
+<tr>
+<td>Role</td>
+<td>Primary firewall/router</td>
+</tr>
+<tr>
+<td>Management IP</td>
+<td>10.0.10.21</td>
+</tr>
+<tr>
+<td>Deployed</td>
+<td>2024-11-15</td>
+</tr>
+</table>
+
+<h2>Motivation</h2>
+
+<p>The Sophos SG 210 reached EOL in 2021. No security updates. The hardware remained functional. Replacing the proprietary firmware with Ubuntu provided current security patches and full control over configuration.</p>
+
+<p>This deployment served as a learning exercise. Commercial firewall appliances abstract configuration behind web interfaces. Building a firewall from Ubuntu exposed the underlying mechanisms: iptables/nftables, routing tables, network namespaces, and kernel parameters.</p>
+
+<p>The goal was understanding how firewalls work, not just how to configure them.</p>
+
+<h2>Installation</h2>
+
+<p>Ubuntu Server 24.04 LTS installed via USB. The Sophos hardware uses standard BIOS. Boot from USB, select the mSATA SSD as the installation target. The installer detected all 8 network interfaces.</p>
+
+<p>Network interface naming used predictable names (enp2s0, enp3s0, etc.). Netplan configuration mapped interfaces to VLANs. The WAN interface connected to the ISP router. LAN interfaces connected to the managed switch.</p>
+
+<h2>Network Configuration</h2>
+
+<p>The firewall bridges multiple VLANs. Netplan defines bridge interfaces. Each VLAN gets a bridge. The firewall acts as the default gateway for each VLAN.</p>
+
+<p>Example Netplan configuration for VLAN 20:</p>
+
+<pre>
+network:
+  version: 2
+  ethernets:
+    enp2s0:
+      dhcp4: false
+  bridges:
+    br20:
+      interfaces: [enp2s0]
+      addresses: [10.0.20.1/24]
+      parameters:
+        stp: false
+</pre>
+
+<p>IP forwarding enabled via sysctl. The kernel routes packets between VLANs based on firewall rules.</p>
+
+<h2>Firewall Rules</h2>
+
+<p>nftables replaced iptables. The ruleset uses tables, chains, and rules. The configuration file lives at <code>/etc/nftables.conf</code>.</p>
+
+<p>Default policy: drop all traffic. Explicit allow rules for permitted traffic. Stateful connection tracking reduces rule complexity. Established connections bypass most rules.</p>
+
+<p>Example rule allowing VLAN 20 to access the internet:</p>
+
+<pre>
+table inet filter {
+  chain forward {
+    type filter hook forward priority 0; policy drop;
+    
+    iifname "br20" oifname "wan0" ct state new,established,related accept
+    iifname "wan0" oifname "br20" ct state established,related accept
+  }
+}
+</pre>
+
+<p>Inter-VLAN rules restrict traffic. Management VLAN cannot be reached from other VLANs. IoT VLAN has no inbound access.</p>
+
+<h2>NAT Configuration</h2>
+
+<p>Source NAT (SNAT) translates internal IPs to the WAN IP. nftables handles this in the nat table:</p>
+
+<pre>
+table inet nat {
+  chain postrouting {
+    type nat hook postrouting priority 100;
+    oifname "wan0" masquerade
+  }
+}
+</pre>
+
+<p>Port forwarding uses destination NAT (DNAT). External ports map to internal services. Example: external port 2222 forwards to internal SSH on port 22.</p>
+
+<h2>VPN</h2>
+
+<p>WireGuard provides VPN access. Configuration at <code>/etc/wireguard/wg0.conf</code>. The VPN subnet is 10.0.100.0/24. Clients receive IPs via static assignment.</p>
+
+<p>VPN traffic routes through the firewall. Clients access internal VLANs based on firewall rules. Split tunneling sends only internal traffic through the VPN. Internet traffic uses the client's local connection.</p>
+
+<h2>DNS</h2>
+
+<p>Unbound runs on the firewall. It provides DNS for internal VLANs. Local zone maps internal hostnames. Upstream queries forward to Cloudflare DNS over TLS.</p>
+
+<p>Ad blocking uses a blocklist. Unbound returns NXDOMAIN for blocked domains. The list updates weekly via cron.</p>
+
+<h2>Monitoring</h2>
+
+<p>Prometheus node_exporter exposes system metrics. Grafana visualizes CPU, memory, network throughput, and connection counts. Alerts trigger on high CPU or connection table exhaustion.</p>
+
+<p>Logs go to journald. Critical events forward to a central syslog server. Log rotation prevents disk exhaustion.</p>
+
+<h2>Challenges</h2>
+
+<p>Network interface naming was inconsistent across reboots initially. Netplan configuration used MAC addresses to ensure stable naming. This fixed the issue.</p>
+
+<p>nftables syntax differs from iptables. The transition required reading the nftables wiki and testing rules in a VM before deploying to production.</p>
+
+<p>Connection tracking table size needed tuning. Default limits were too low for the number of concurrent connections. Increased <code>net.netfilter.nf_conntrack_max</code> via sysctl.</p>
+
+<h2>Lessons Learned</h2>
+
+<p>Building a firewall from scratch clarifies what commercial appliances abstract. NAT, routing, and firewall rules are kernel features. The appliance provides a configuration interface and management tools.</p>
+
+<p>Ubuntu provides the same capabilities. The tradeoff is manual configuration versus vendor support. For a lab environment, the learning value outweighs the convenience of a turnkey solution.</p>
+
+<p>Documentation matters. Runbooks for common tasks reduce troubleshooting time. Configuration files need comments explaining non-obvious choices.</p>
+
+<h2>Related Devices</h2>
+
+<ul>
+<li><a href="oak03ufw01.html">oak03ufw01</a> - Secondary firewall for HA testing</li>
+<li><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> - Hardware platform</li>
+</ul>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="../../enhance.js" type="text/javascript"></script>
+
+</body>
+</html>

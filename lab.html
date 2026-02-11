@@ -27,6 +27,54 @@
 
 <main>
 
+<h2>Overview</h2>
+
+<p>This lab documents hardware, network topology, infrastructure projects, and device configurations. The focus is on preserving knowledge about EOL hardware and learning through hands-on infrastructure work.</p>
+
+<ul>
+<li><a href="lab/naming.html">Device Naming Scheme</a> - Hostname convention and rationale</li>
+<li><a href="#devices">Devices</a> - Individual device documentation</li>
+<li><a href="#types">Device Types</a> - Hardware platform specifications</li>
+</ul>
+
+<h2 id="devices">Devices</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Hostname</th>
+<th>Type</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+<tr>
+<td><a href="lab/devices/oak02ufw01.html">oak02ufw01</a></td>
+<td><a href="lab/types/sophos-sg-210v3.html">Sophos SG 210v3</a></td>
+<td>Primary firewall</td>
+<td>Production</td>
+</tr>
+<tr>
+<td><a href="lab/devices/oak03ufw01.html">oak03ufw01</a></td>
+<td><a href="lab/types/sophos-sg-210v3.html">Sophos SG 210v3</a></td>
+<td>Secondary firewall</td>
+<td>HA testing</td>
+</tr>
+</table>
+
+<h2 id="types">Device Types</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Model</th>
+<th>Category</th>
+<th>Status</th>
+</tr>
+<tr>
+<td><a href="lab/types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a></td>
+<td>UTM Appliance</td>
+<td>EOL 2021</td>
+</tr>
+</table>
+
 <h2>Hardware</h2>
 
 <h3>Vintage Systems</h3>
@@ -101,7 +149,7 @@
 
 <h3>Topology</h3>
 
-<p>The network uses VLANs for segmentation. A managed switch handles VLAN tagging. A router running pfSense provides routing, firewall, and VPN.</p>
+<p>The network uses VLANs for segmentation. A managed switch handles VLAN tagging. Ubuntu-based firewalls (<a href="lab/devices/oak02ufw01.html">oak02ufw01</a>, <a href="lab/devices/oak03ufw01.html">oak03ufw01</a>) provide routing, firewall, and VPN.</p>
 
 <table border="1" cellpadding="5" cellspacing="0">
 <tr>

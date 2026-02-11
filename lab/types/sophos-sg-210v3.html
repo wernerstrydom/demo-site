@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sophos SG 210v3 - Werner Strydom</title>
+<meta name="description" content="Sophos SG 210 rev.3 UTM appliance specifications and documentation">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>Sophos SG 210 rev.3</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="../../index.html">Home</a></li>
+<li><a href="../../writing.html">Writing</a></li>
+<li><a href="../../lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Overview</h2>
+
+<p>The Sophos SG 210 rev.3 is a unified threat management (UTM) appliance released in 2014. It runs Sophos UTM 9 firmware. The device reached end-of-life in 2021. Sophos discontinued support and security updates.</p>
+
+<p>The hardware remains functional. The lack of updates makes it unsuitable for production security roles. It serves as a learning platform for understanding commercial firewall appliances and as a baseline for comparison with open-source alternatives.</p>
+
+<h2>Specifications</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>Component</th>
+<th>Specification</th>
+</tr>
+<tr>
+<td>CPU</td>
+<td>Intel Atom C2358 dual-core @ 1.7GHz</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>4GB DDR3</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>64GB mSATA SSD</td>
+</tr>
+<tr>
+<td>Network Ports</td>
+<td>8x GbE (Intel i350)</td>
+</tr>
+<tr>
+<td>Power</td>
+<td>60W, external PSU</td>
+</tr>
+<tr>
+<td>Dimensions</td>
+<td>1U rackmount, 280mm depth</td>
+</tr>
+</table>
+
+<h2>Capabilities</h2>
+
+<p>The SG 210 rev.3 provides firewall, VPN, IPS, web filtering, and application control. Throughput depends on enabled features. Firewall throughput reaches 3.5 Gbps. IPS throughput drops to 450 Mbps. VPN throughput reaches 650 Mbps.</p>
+
+<p>The device supports up to 100 IPsec tunnels and 100 SSL VPN users. VLAN support allows network segmentation. High availability requires a second unit.</p>
+
+<h2>Firmware</h2>
+
+<p>Sophos UTM 9.7 was the final supported version. The last update released in 2021. No security patches exist for vulnerabilities discovered after EOL.</p>
+
+<p>The firmware uses a Linux kernel with proprietary Sophos components. Web interface provides configuration. CLI access exists but is limited compared to open-source alternatives.</p>
+
+<h2>End-of-Life Status</h2>
+
+<p>Sophos declared EOL in 2021. No firmware updates. No security patches. No technical support. The device cannot receive Sophos licenses for new features.</p>
+
+<p>Existing licenses continue to work but provide no value without updates. The web filtering database no longer updates. IPS signatures are outdated. Antivirus definitions are stale.</p>
+
+<h2>Replacement Options</h2>
+
+<p>The hardware supports alternative operating systems. Ubuntu Server, pfSense, OPNsense, and VyOS run on the platform. The Intel NICs have good Linux driver support. The Atom CPU handles routing and firewall tasks.</p>
+
+<p>Installing alternative firmware requires console access. The device uses standard BIOS. Boot from USB to install a new OS. The mSATA SSD appears as a standard SATA device.</p>
+
+<h2>Use Cases</h2>
+
+<p>The device works for learning firewall concepts without production risk. It demonstrates commercial UTM features. It provides a comparison point for open-source solutions.</p>
+
+<p>The hardware serves as a platform for deploying open-source firewalls. The 8-port configuration supports complex network topologies. The 1U form factor fits standard racks.</p>
+
+<h2>Known Issues</h2>
+
+<p>The Intel Atom C2000 series has a known clock signal degradation issue. Devices manufactured before the fix may fail after 18-24 months of operation. Sophos issued hardware replacements during the warranty period. Out-of-warranty units may fail without warning.</p>
+
+<p>The external power supply is proprietary. Replacements are difficult to source after EOL. The device uses 12V DC. Standard 12V supplies work with the correct barrel connector.</p>
+
+<h2>Documentation</h2>
+
+<p>Original Sophos documentation is archived. The UTM 9 admin guide covers configuration. The hardware guide covers physical installation.</p>
+
+<p>Community forums preserve troubleshooting information. The Sophos community forum has archived threads. Reddit r/sophos contains user experiences.</p>
+
+<h2>Related Devices</h2>
+
+<ul>
+<li><a href="../devices/oak02ufw01.html">oak02ufw01</a> - Ubuntu firewall replacing this device</li>
+<li><a href="../devices/oak03ufw01.html">oak03ufw01</a> - Ubuntu firewall replacing this device</li>
+</ul>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="../../enhance.js" type="text/javascript"></script>
+
+</body>
+</html>
