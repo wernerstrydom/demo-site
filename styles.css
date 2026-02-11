@@ -1,0 +1,517 @@
+/* 
+ * Progressive Enhancement Stylesheet
+ * Layer 1: Base styles for all browsers (1999+)
+ * Layer 2: Enhanced styles for modern browsers
+ */
+
+/* ============================================
+   LAYER 1: BASE STYLES (IE5, Netscape 4+)
+   ============================================ */
+
+/* Basic reset and typography */
+body {
+    margin: 20px;
+    padding: 0;
+    font-family: serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #000000;
+    background-color: #ffffff;
+}
+
+/* Container for content */
+.container {
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: sans-serif;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2em;
+    color: #000080;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #000080;
+}
+
+h3 {
+    font-size: 1.2em;
+    color: #000080;
+}
+
+/* Paragraphs and text */
+p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.tagline {
+    font-style: italic;
+    color: #666666;
+}
+
+/* Links */
+a:link {
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #551a8b;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #ee0000;
+}
+
+a:active {
+    color: #ff0000;
+}
+
+/* Lists */
+ul, ol {
+    margin-left: 2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+li {
+    margin-bottom: 0.3em;
+}
+
+/* Navigation */
+nav {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline;
+    margin-right: 1em;
+}
+
+/* Horizontal rules */
+hr {
+    border: 0;
+    border-top: 1px solid #cccccc;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+th, td {
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+/* Code and preformatted text */
+code, pre {
+    font-family: monospace;
+    background-color: #f5f5f5;
+}
+
+pre {
+    padding: 10px;
+    overflow: auto;
+}
+
+/* Emphasis */
+em {
+    font-style: italic;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* Small text */
+small {
+    font-size: 0.85em;
+}
+
+/* Blockquotes */
+blockquote {
+    margin-left: 2em;
+    margin-right: 2em;
+    padding-left: 1em;
+    border-left: 3px solid #cccccc;
+    font-style: italic;
+}
+
+/* Header and footer */
+header {
+    margin-bottom: 2em;
+}
+
+footer {
+    margin-top: 2em;
+    font-size: 0.9em;
+    color: #666666;
+}
+
+/* Articles */
+article {
+    margin-bottom: 2em;
+}
+
+/* ============================================
+   LAYER 2: MODERN BROWSER ENHANCEMENTS
+   ============================================ */
+
+/* Modern box model */
+@supports (box-sizing: border-box) {
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+}
+
+/* CSS Custom Properties (CSS Variables) */
+:root {
+    --color-primary: #2c3e50;
+    --color-secondary: #3498db;
+    --color-accent: #e74c3c;
+    --color-text: #333333;
+    --color-text-light: #666666;
+    --color-background: #ffffff;
+    --color-background-alt: #f8f9fa;
+    --color-border: #dee2e6;
+    --font-serif: Georgia, 'Times New Roman', Times, serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    --max-width: 800px;
+    --spacing-unit: 1rem;
+}
+
+/* Enhanced body styles */
+@supports (display: flex) {
+    body {
+        font-family: var(--font-serif);
+        color: var(--color-text);
+        background-color: var(--color-background);
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Container with max-width */
+@supports (max-width: 800px) {
+    .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 2rem;
+    }
+}
+
+/* Modern typography */
+@supports (font-feature-settings: "kern") {
+    body {
+        font-feature-settings: "kern", "liga", "clig", "calt";
+        text-rendering: optimizeLegibility;
+    }
+}
+
+/* Enhanced headings */
+@supports (color: var(--color-primary)) {
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-sans);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+        margin-top: 0;
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-top: 2rem;
+        padding-bottom: 0.3rem;
+        border-bottom: 2px solid var(--color-border);
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+        margin-top: 1.5rem;
+    }
+}
+
+/* Enhanced links */
+@supports (transition: color 0.2s) {
+    a:link {
+        color: var(--color-secondary);
+        text-decoration: none;
+        transition: color 0.2s ease, border-bottom 0.2s ease;
+        border-bottom: 1px solid transparent;
+    }
+    
+    a:visited {
+        color: var(--color-primary);
+    }
+    
+    a:hover {
+        color: var(--color-accent);
+        border-bottom: 1px solid var(--color-accent);
+    }
+    
+    a:active {
+        color: var(--color-accent);
+    }
+}
+
+/* Enhanced navigation */
+@supports (display: flex) {
+    nav {
+        background-color: var(--color-background-alt);
+        padding: 1rem;
+        margin: 2rem 0;
+        border-radius: 4px;
+    }
+    
+    nav p {
+        display: none;
+    }
+    
+    nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    nav li {
+        margin: 0;
+    }
+    
+    nav a {
+        font-family: var(--font-sans);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+    
+    nav a:hover {
+        background-color: var(--color-primary);
+        color: var(--color-background);
+        border-bottom: none;
+    }
+}
+
+/* Enhanced tables */
+@supports (border-collapse: collapse) {
+    table {
+        width: 100%;
+        border: 1px solid var(--color-border);
+        margin: 2rem 0;
+    }
+    
+    th {
+        background-color: var(--color-primary);
+        color: var(--color-background);
+        padding: 0.75rem;
+        font-family: var(--font-sans);
+    }
+    
+    td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+    
+    tr:hover {
+        background-color: var(--color-background-alt);
+    }
+}
+
+/* Enhanced code blocks */
+@supports (border-radius: 4px) {
+    code {
+        font-family: var(--font-mono);
+        background-color: var(--color-background-alt);
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+    
+    pre {
+        background-color: var(--color-background-alt);
+        padding: 1rem;
+        border-radius: 4px;
+        border-left: 4px solid var(--color-secondary);
+        overflow-x: auto;
+    }
+    
+    pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+}
+
+/* Enhanced blockquotes */
+@supports (border-left: 4px solid) {
+    blockquote {
+        margin: 2rem 0;
+        padding: 1rem 1.5rem;
+        background-color: var(--color-background-alt);
+        border-left: 4px solid var(--color-secondary);
+        border-radius: 0 4px 4px 0;
+    }
+}
+
+/* Enhanced articles */
+@supports (margin-bottom: 3rem) {
+    article {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+    }
+    
+    article h2 {
+        margin-top: 0;
+    }
+    
+    article em {
+        color: var(--color-text-light);
+        font-size: 0.9em;
+    }
+}
+
+/* Enhanced header */
+@supports (text-align: center) {
+    header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--color-border);
+    }
+    
+    header .tagline {
+        color: var(--color-text-light);
+        font-size: 1.1rem;
+    }
+}
+
+/* Enhanced footer */
+@supports (text-align: center) {
+    footer {
+        text-align: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--color-border);
+        color: var(--color-text-light);
+    }
+}
+
+/* Responsive design for modern browsers */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        font-size: 12pt;
+        color: #000000;
+        background-color: #ffffff;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+    
+    a:link, a:visited {
+        color: #000000;
+        text-decoration: underline;
+    }
+    
+    nav {
+        display: none;
+    }
+    
+    h2 {
+        page-break-after: avoid;
+    }
+}
+
+/* Dark mode support for modern browsers */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-primary: #64b5f6;
+        --color-secondary: #81c784;
+        --color-accent: #ff8a65;
+        --color-text: #e0e0e0;
+        --color-text-light: #b0b0b0;
+        --color-background: #1a1a1a;
+        --color-background-alt: #2d2d2d;
+        --color-border: #404040;
+    }
+    
+    @supports (color: var(--color-background)) {
+        body {
+            color: var(--color-text);
+            background-color: var(--color-background);
+        }
+    }
+}
+
+/* Smooth scrolling for modern browsers */
+@supports (scroll-behavior: smooth) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Focus styles for accessibility */
+@supports (outline: 2px solid) {
+    a:focus, button:focus {
+        outline: 2px solid var(--color-secondary);
+        outline-offset: 2px;
+    }
+}
