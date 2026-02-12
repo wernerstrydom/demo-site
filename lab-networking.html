@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Networking - Werner Strydom</title>
+<meta name="description" content="Lab network topology and configuration">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<h1>Networking</h1>
+</header>
+
+<nav>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="writing.html">Writing</a></li>
+<li><a href="lab.html">Lab</a></li>
+</ul>
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Topology</h2>
+
+<p>The network uses VLANs for segmentation. A managed switch handles VLAN tagging. Ubuntu-based firewalls (<a href="lab/devices/oak02ufw01.html">oak02ufw01</a>, <a href="lab/devices/oak03ufw01.html">oak03ufw01</a>) provide routing, firewall, and VPN.</p>
+
+<h2>VLANs</h2>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th>VLAN</th>
+<th>Subnet</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>10</td>
+<td>10.0.10.0/24</td>
+<td>Management (IPMI, iDRAC)</td>
+</tr>
+<tr>
+<td>20</td>
+<td>10.0.20.0/24</td>
+<td>Production workloads</td>
+</tr>
+<tr>
+<td>30</td>
+<td>10.0.30.0/24</td>
+<td>Lab and testing</td>
+</tr>
+<tr>
+<td>40</td>
+<td>10.0.40.0/24</td>
+<td>Vintage systems</td>
+</tr>
+<tr>
+<td>50</td>
+<td>10.0.50.0/24</td>
+<td>IoT devices</td>
+</tr>
+</table>
+
+<p>Firewall rules restrict inter-VLAN traffic. Management VLAN is isolated. IoT VLAN has no inbound access from other VLANs. Lab VLAN can initiate connections but receives no unsolicited traffic.</p>
+
+<h2>Services</h2>
+
+<p><strong>DNS:</strong> Unbound with local zone for internal names. Forwards to upstream resolvers over TLS. Blocks ad domains.</p>
+
+<p><strong>DHCP:</strong> ISC DHCP with static reservations. Network boot support via PXE. Option 66 points to TFTP server.</p>
+
+<p><strong>Monitoring:</strong> Prometheus scrapes exporters on each system. Grafana visualizes metrics. Alertmanager sends notifications.</p>
+
+<p><strong>Storage:</strong> ZFS on Server 1 provides network storage via NFS and SMB. Snapshots run hourly. Replication to external drive runs daily.</p>
+
+<p><strong>VPN:</strong> WireGuard for remote access. Split tunnel configuration. DNS pushed to clients.</p>
+
+</main>
+
+<hr>
+
+<footer>
+<p>Werner Strydom &copy; 2026</p>
+</footer>
+
+</div>
+
+<script src="enhance.js" type="text/javascript"></script>
+
+</body>
+</html>

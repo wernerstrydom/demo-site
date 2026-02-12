@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Lab - Werner Strydom</title>
-<meta name="description" content="Home lab documentation">
+<title>Devices - Werner Strydom</title>
+<meta name="description" content="Lab device inventory">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
@@ -12,7 +12,7 @@
 <div class="container">
 
 <header>
-<h1>Lab</h1>
+<h1>Devices</h1>
 </header>
 
 <nav>
@@ -27,16 +27,27 @@
 
 <main>
 
-<p>Documentation for home lab infrastructure.</p>
-
-<table border="1" cellpadding="10" cellspacing="0">
+<table border="1" cellpadding="5" cellspacing="0">
 <tr>
-<td><strong><a href="lab-hardware.html">Hardware</a></strong><br>Physical systems and specifications</td>
-<td><strong><a href="lab-devices.html">Devices</a></strong><br>Individual device documentation</td>
+<th>Hostname</th>
+<th>Hardware</th>
+<th>OS</th>
+<th>Role</th>
+<th>IP</th>
 </tr>
 <tr>
-<td><strong><a href="lab-networking.html">Networking</a></strong><br>Network topology and configuration</td>
-<td><strong><a href="lab/naming.html">Naming</a></strong><br>Device naming scheme</td>
+<td><a href="lab/devices/oak02ufw01.html">oak02ufw01</a></td>
+<td><a href="lab/types/sophos-sg-210v3.html">Sophos SG 210v3</a></td>
+<td>Ubuntu 24.04</td>
+<td>Primary firewall</td>
+<td>10.0.10.21</td>
+</tr>
+<tr>
+<td><a href="lab/devices/oak03ufw01.html">oak03ufw01</a></td>
+<td><a href="lab/types/sophos-sg-210v3.html">Sophos SG 210v3</a></td>
+<td>Ubuntu 24.04</td>
+<td>Secondary firewall</td>
+<td>10.0.10.22</td>
 </tr>
 </table>
 
