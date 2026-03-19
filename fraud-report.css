@@ -1,0 +1,348 @@
+/*
+ * fraud-report.css — Styles for the Fraud Report page
+ * Extends the base styles.css with report-specific components.
+ * Designed to be compatible with modern browsers while degrading gracefully.
+ */
+
+/* ==========================================================================
+   REPORT HEADER
+   ========================================================================== */
+.report-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+    line-height: 1.3;
+    border-bottom: 3px solid #111111;
+    padding-bottom: 0.3em;
+}
+
+.report-subtitle {
+    font-size: 1.05em;
+    font-style: italic;
+    color: #444444;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+
+/* ==========================================================================
+   TABLE OF CONTENTS
+   ========================================================================== */
+.toc-box {
+    border: 1px solid #cccccc;
+    background: #f9f9f9;
+    padding: 16px 20px;
+    margin: 1.5em 0;
+    display: inline-block;
+    min-width: 260px;
+    max-width: 100%;
+}
+
+.toc-box strong {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.toc-box ol {
+    margin: 0;
+    padding-left: 1.4em;
+}
+
+.toc-box li {
+    margin: 4px 0;
+    font-size: 0.92em;
+}
+
+/* ==========================================================================
+   KEY STATISTICS CARDS
+   ========================================================================== */
+.key-stats {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 1.5em 0;
+}
+
+.stat-card {
+    border: 2px solid #111111;
+    background: #f5f5f5;
+    padding: 14px 18px;
+    min-width: 140px;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 140px;
+    flex: 1 1 140px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.9em;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111111;
+    line-height: 1.1;
+}
+
+.stat-label {
+    font-size: 0.8em;
+    color: #444444;
+    margin-top: 6px;
+    line-height: 1.3;
+}
+
+/* ==========================================================================
+   CALLOUT BOXES
+   ========================================================================== */
+.callout {
+    border-left: 4px solid #888888;
+    padding: 12px 16px;
+    margin: 1.5em 0;
+    background: #f8f8f8;
+}
+
+.callout-warning {
+    border-left-color: #cc4400;
+    background: #fff8f5;
+}
+
+.callout-info {
+    border-left-color: #0055aa;
+    background: #f5f8ff;
+}
+
+.callout strong {
+    display: block;
+    margin-bottom: 6px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================================================
+   DATA TABLES
+   ========================================================================== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0 1.5em 0;
+    font-size: 0.88em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.data-table caption {
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 6px;
+    font-size: 0.95em;
+    caption-side: top;
+}
+
+.data-table th {
+    background: #111111;
+    color: #ffffff;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: bold;
+    vertical-align: top;
+}
+
+.data-table td {
+    padding: 7px 10px;
+    vertical-align: top;
+    border: 1px solid #cccccc;
+}
+
+.data-table tr:nth-child(even) td {
+    background: #f5f5f5;
+}
+
+.data-table tr:hover td {
+    background: #eef4ff;
+}
+
+/* Outcome indicators */
+.outcome-passed {
+    color: #006600;
+    font-weight: bold;
+}
+
+.outcome-failed {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+.outcome-pending {
+    color: #885500;
+    font-weight: bold;
+}
+
+/* Percentage indicators */
+.pct-high {
+    color: #006600;
+    font-weight: bold;
+}
+
+.pct-mid {
+    color: #885500;
+    font-weight: bold;
+}
+
+.pct-low {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   CHARTS
+   ========================================================================== */
+.chart-container {
+    margin: 1.5em 0;
+    padding: 16px;
+    border: 1px solid #cccccc;
+    background: #ffffff;
+    overflow-x: auto;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* ==========================================================================
+   LEGISLATION TABLE
+   ========================================================================== */
+.legislation-table td:nth-child(5),
+.legislation-table th:nth-child(5) {
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   VOTING TABLE
+   ========================================================================== */
+.voting-table td:nth-child(4),
+.voting-table td:nth-child(5),
+.voting-table td:nth-child(6),
+.voting-table td:nth-child(7) {
+    text-align: center;
+}
+
+/* ==========================================================================
+   SOURCE NOTES AND DISCLAIMERS
+   ========================================================================== */
+.source-note {
+    font-size: 0.82em;
+    color: #555555;
+    font-style: italic;
+    margin-top: -0.8em;
+    margin-bottom: 1.5em;
+    line-height: 1.4;
+}
+
+.disclaimer {
+    font-size: 0.85em;
+    color: #444444;
+    border-top: 1px solid #cccccc;
+    padding-top: 12px;
+    margin-top: 2em;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   DARK MODE SUPPORT
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+    .toc-box {
+        background: #1a1a1a;
+        border-color: #444444;
+    }
+
+    .stat-card {
+        background: #1a1a1a;
+        border-color: #888888;
+    }
+
+    .stat-number {
+        color: #eeeeee;
+    }
+
+    .stat-label {
+        color: #aaaaaa;
+    }
+
+    .callout {
+        background: #1a1a1a;
+    }
+
+    .callout-warning {
+        background: #1a0f0a;
+        border-left-color: #ff6633;
+    }
+
+    .callout-info {
+        background: #0a0f1a;
+        border-left-color: #4488ff;
+    }
+
+    .data-table th {
+        background: #333333;
+        color: #ffffff;
+    }
+
+    .data-table td {
+        border-color: #444444;
+    }
+
+    .data-table tr:nth-child(even) td {
+        background: #1a1a1a;
+    }
+
+    .data-table tr:hover td {
+        background: #0a1a2a;
+    }
+
+    .chart-container {
+        background: #111111;
+        border-color: #444444;
+    }
+
+    .source-note {
+        color: #888888;
+    }
+
+    .disclaimer {
+        color: #aaaaaa;
+        border-top-color: #444444;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+@media screen and (max-width: 600px) {
+    .report-title {
+        font-size: 1.4em;
+    }
+
+    .key-stats {
+        gap: 8px;
+    }
+
+    .stat-card {
+        min-width: 120px;
+        padding: 10px 12px;
+    }
+
+    .stat-number {
+        font-size: 1.5em;
+    }
+
+    .data-table {
+        font-size: 0.78em;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 5px 6px;
+    }
+}

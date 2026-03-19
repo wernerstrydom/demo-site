@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cost of Fraud: A Decade of Losses and Legislative Accountability</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+<link rel="stylesheet" href="fraud-report.css" type="text/css">
+</head>
+<body>
+<div class="container">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div class="site-header">
+    <h1>Werner Strydom</h1>
+    <p class="tagline">Engineering trade-offs, homelab experiments, and hard questions.</p>
+  </div>
+  <div class="site-nav">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="writing.html">Writing</a></li>
+      <li><a href="lab.html">Lab</a></li>
+      <li><a href="fraud-report.html" class="current">Fraud Report</a></li>
+    </ul>
+  </div>
+  <hr>
+  <div class="site-main" id="main-content">
+
+    <h1 class="report-title">The Cost of Fraud: A Decade of Losses and Legislative Accountability</h1>
+    <p class="report-subtitle">A data-driven examination of fraud in the United States from 2015 to 2026, the legislative measures proposed to combat it, and how elected officials voted.</p>
+
+    <div class="toc-box">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#executive-summary">Executive Summary</a></li>
+        <li><a href="#fraud-costs">The Scale of Fraud: What It Costs Americans</a></li>
+        <li><a href="#federal-fraud">Federal Government Fraud &amp; Improper Payments</a></li>
+        <li><a href="#consumer-fraud">Consumer &amp; Financial Fraud</a></li>
+        <li><a href="#covid-fraud">COVID-19 Pandemic Fraud</a></li>
+        <li><a href="#healthcare-fraud">Healthcare Fraud</a></li>
+        <li><a href="#state-fraud">State-Level Fraud</a></li>
+        <li><a href="#legislation">Anti-Fraud Legislation: What Was Proposed</a></li>
+        <li><a href="#voting-records">Voting Records by Party</a></li>
+        <li><a href="#analysis">Analysis: Are Politicians Doing Their Jobs?</a></li>
+        <li><a href="#sources">Sources</a></li>
+      </ol>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <h2 id="executive-summary">1. Executive Summary</h2>
+    <p>Fraud against the United States government and its citizens has reached staggering proportions. The Government Accountability Office (GAO) estimates the federal government loses between <strong>$233 billion and $521 billion annually</strong> to fraud alone — not counting improper payments from administrative errors. In fiscal year 2025, federal agencies reported <strong>$186 billion</strong> in improper payments across 64 programs. Since 2003, total improper payments have exceeded <strong>$2.8 trillion</strong>.</p>
+    <p>Consumer fraud reported to the Federal Trade Commission (FTC) reached a record <strong>$12.5 billion in 2024</strong>, a 25% increase over 2023. The FBI's Internet Crime Complaint Center (IC3) recorded losses exceeding <strong>$16.6 billion in 2024</strong>, a 33% increase year-over-year. During the COVID-19 pandemic, an estimated <strong>$300+ billion</strong> was fraudulently obtained from relief programs.</p>
+    <p>Congress has passed a number of anti-fraud measures over this period, but voting records reveal a consistent and striking partisan divide: Republicans have voted overwhelmingly in favor of anti-fraud legislation, while Democrats have frequently voted against or abstained from such measures — particularly on bills targeting fraud in government benefit programs.</p>
+
+    <div class="key-stats">
+      <div class="stat-card">
+        <div class="stat-number">$521B</div>
+        <div class="stat-label">Max annual federal fraud loss (GAO estimate)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$186B</div>
+        <div class="stat-label">FY2025 federal improper payments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$300B+</div>
+        <div class="stat-label">COVID-19 pandemic relief fraud</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$12.5B</div>
+        <div class="stat-label">Consumer fraud losses in 2024 (FTC)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$2.8T</div>
+        <div class="stat-label">Cumulative improper payments since 2003</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$6.8B</div>
+        <div class="stat-label">FY2025 False Claims Act recoveries (record)</div>
+      </div>
+    </div>
+
+    <!-- FRAUD COSTS -->
+    <h2 id="fraud-costs">2. The Scale of Fraud: What It Costs Americans</h2>
+    <p>Fraud against the United States takes many forms: improper payments from federal programs, consumer scams, healthcare billing fraud, pandemic relief theft, and identity fraud. The aggregate cost is measured in the hundreds of billions of dollars annually. The chart below tracks the growth of reported consumer fraud losses (FTC data) alongside federal improper payments over the past decade.</p>
+
+    <h3>Federal Improper Payments by Fiscal Year (2015–2025)</h3>
+    <p>Federal agencies are required by law to report improper payments — payments made in incorrect amounts, to ineligible recipients, or for unsupported claims. These figures represent a floor, not a ceiling, as many programs do not report or underreport.</p>
+
+    <div class="chart-container">
+      <canvas id="improperPaymentsChart" width="700" height="350"></canvas>
+    </div>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Federal Improper Payments by Fiscal Year (in billions USD)</caption>
+      <thead>
+        <tr>
+          <th>Fiscal Year</th>
+          <th>Improper Payments ($B)</th>
+          <th>Key Driver</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>FY2015</td><td>$136.7</td><td>Medicare, Medicaid, EITC</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2016</td><td>$144.3</td><td>Medicare, Medicaid, EITC</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2017</td><td>$141.2</td><td>Medicare, Medicaid, EITC</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2018</td><td>$151.3</td><td>Medicare, Medicaid, EITC</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2019</td><td>$175.0</td><td>Medicare, Medicaid, EITC</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2020</td><td>$206.1</td><td>COVID relief programs added</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2021</td><td>$281.4</td><td>Pandemic UI, PPP, EIDL fraud surge</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2022</td><td>$247.0</td><td>Elevated pandemic programs</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2023</td><td>$236.0</td><td>Medicare, Medicaid, SNAP</td><td>OMB / PaymentAccuracy.gov</td></tr>
+        <tr><td>FY2024</td><td>$162.0</td><td>Medicare, Medicaid, SNAP</td><td>GAO (Mar 2025)</td></tr>
+        <tr><td>FY2025</td><td>$186.0</td><td>Medicare, Medicaid, SNAP</td><td>GAO (Mar 2026)</td></tr>
+      </tbody>
+    </table>
+
+    <p class="source-note">Sources: GAO-25-107552 (Jan 2025); GAO-26-109034 (Mar 2026); OMB PaymentAccuracy.gov historical data. Note: FY2021 spike reflects COVID-19 pandemic relief programs including Unemployment Insurance ($100–135B fraud estimate), PPP, and EIDL.</p>
+
+    <h3>Consumer Fraud Losses Reported to FTC (2015–2024)</h3>
+    <div class="chart-container">
+      <canvas id="consumerFraudChart" width="700" height="350"></canvas>
+    </div>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>FTC Consumer Sentinel Network — Reported Fraud Losses by Year</caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Reported Losses ($B)</th>
+          <th>Reports Filed (millions)</th>
+          <th>Year-over-Year Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2015</td><td>$1.6</td><td>1.2</td><td>—</td></tr>
+        <tr><td>2016</td><td>$1.9</td><td>1.3</td><td>+19%</td></tr>
+        <tr><td>2017</td><td>$2.1</td><td>1.4</td><td>+11%</td></tr>
+        <tr><td>2018</td><td>$2.6</td><td>1.5</td><td>+24%</td></tr>
+        <tr><td>2019</td><td>$3.3</td><td>1.7</td><td>+27%</td></tr>
+        <tr><td>2020</td><td>$4.8</td><td>2.2</td><td>+45%</td></tr>
+        <tr><td>2021</td><td>$5.9</td><td>2.8</td><td>+23%</td></tr>
+        <tr><td>2022</td><td>$8.8</td><td>2.4</td><td>+49%</td></tr>
+        <tr><td>2023</td><td>$10.0</td><td>2.6</td><td>+14%</td></tr>
+        <tr><td>2024</td><td>$12.5</td><td>2.6</td><td>+25%</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">Sources: FTC Consumer Sentinel Network Data Books 2015–2024; FTC Press Release Mar 10, 2025. Note: Reported losses represent only a fraction of actual losses, as most fraud goes unreported.</p>
+
+    <!-- FEDERAL FRAUD -->
+    <h2 id="federal-fraud">3. Federal Government Fraud &amp; Improper Payments</h2>
+    <p>The GAO's government-wide fraud estimate — between <strong>$233 billion and $521 billion annually</strong> — is based on data from fiscal years 2018–2022 and represents the most authoritative estimate available. This estimate covers fraud specifically, separate from administrative errors that also contribute to improper payments.</p>
+
+    <p>The largest contributors to federal improper payments are consistently the same programs:</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Top Federal Programs by Improper Payment Volume (FY2024)</caption>
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th>Agency</th>
+          <th>Improper Payments ($B)</th>
+          <th>Error Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Medicare (Fee-for-Service)</td><td>HHS / CMS</td><td>$51.6</td><td>7.66%</td></tr>
+        <tr><td>Medicaid</td><td>HHS / CMS</td><td>$50.3</td><td>5.09%</td></tr>
+        <tr><td>Earned Income Tax Credit (EITC)</td><td>IRS / Treasury</td><td>$21.9</td><td>33.5%</td></tr>
+        <tr><td>Unemployment Insurance</td><td>DOL</td><td>$9.5</td><td>11.0%</td></tr>
+        <tr><td>SNAP (Food Stamps)</td><td>USDA</td><td>$6.5</td><td>8.9%</td></tr>
+        <tr><td>Supplemental Security Income</td><td>SSA</td><td>$5.1</td><td>8.4%</td></tr>
+        <tr><td>Medicare Part D</td><td>HHS / CMS</td><td>$3.6</td><td>3.7%</td></tr>
+        <tr><td>Other Programs (61 total)</td><td>Various</td><td>$13.5</td><td>Varies</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">Sources: GAO-25-107552; CMS FY2025 Improper Payments Fact Sheet; OMB FY2024 Agency Financial Reports. Note: The EITC has the highest error rate of any major federal program, with the IRS acknowledging that 33.5% of all EITC payments are improper.</p>
+
+    <div class="callout callout-warning">
+      <strong>The EITC Problem:</strong> The Earned Income Tax Credit has maintained an improper payment rate of 21–33% for over two decades. The IRS has acknowledged this persistently high error rate. Congress has repeatedly declined to fund robust EITC verification measures. In FY2024, approximately $21.9 billion in EITC payments were improper — representing the single highest error-rate program in the federal government.
+    </div>
+
+    <!-- CONSUMER FRAUD -->
+    <h2 id="consumer-fraud">4. Consumer &amp; Financial Fraud</h2>
+    <p>Beyond government programs, fraud against individual Americans has grown dramatically. The FBI's Internet Crime Complaint Center (IC3) documented <strong>$16.6 billion in losses in 2024</strong> — a 33% increase from 2023 — with investment fraud and business email compromise accounting for the largest shares.</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>FBI IC3 Internet Crime Losses by Year (2015–2024)</caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Reported Losses ($B)</th>
+          <th>Complaints Filed</th>
+          <th>Top Fraud Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2015</td><td>$1.07</td><td>288,012</td><td>Business Email Compromise</td></tr>
+        <tr><td>2016</td><td>$1.45</td><td>298,728</td><td>Business Email Compromise</td></tr>
+        <tr><td>2017</td><td>$1.42</td><td>301,580</td><td>Business Email Compromise</td></tr>
+        <tr><td>2018</td><td>$2.71</td><td>351,937</td><td>Business Email Compromise</td></tr>
+        <tr><td>2019</td><td>$3.50</td><td>467,361</td><td>Business Email Compromise</td></tr>
+        <tr><td>2020</td><td>$4.20</td><td>791,790</td><td>Business Email Compromise / COVID scams</td></tr>
+        <tr><td>2021</td><td>$6.90</td><td>847,376</td><td>Investment Fraud / BEC</td></tr>
+        <tr><td>2022</td><td>$10.30</td><td>800,944</td><td>Investment Fraud</td></tr>
+        <tr><td>2023</td><td>$12.50</td><td>880,418</td><td>Investment Fraud</td></tr>
+        <tr><td>2024</td><td>$16.60</td><td>859,532</td><td>Investment Fraud / BEC</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">Sources: FBI IC3 Annual Internet Crime Reports 2015–2024; FBI Press Release Apr 23, 2025.</p>
+
+    <!-- COVID FRAUD -->
+    <h2 id="covid-fraud">5. COVID-19 Pandemic Fraud</h2>
+    <p>The COVID-19 pandemic created the largest single fraud event in American history. With trillions of dollars disbursed rapidly through emergency programs, fraudsters — ranging from individual opportunists to organized criminal networks — exploited weak controls to steal an estimated <strong>$300 billion or more</strong>.</p>
+
+    <div class="chart-container">
+      <canvas id="covidFraudChart" width="700" height="350"></canvas>
+    </div>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>COVID-19 Pandemic Relief Fraud by Program</caption>
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th>Total Disbursed ($B)</th>
+          <th>Estimated Fraud ($B)</th>
+          <th>Fraud Rate</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Unemployment Insurance (UI)</td><td>$878</td><td>$100–135</td><td>11–15%</td><td>GAO / DOL OIG</td></tr>
+        <tr><td>Paycheck Protection Program (PPP)</td><td>$800</td><td>$64</td><td>8%</td><td>SBA OIG</td></tr>
+        <tr><td>COVID-19 EIDL (Economic Injury Disaster Loan)</td><td>$413</td><td>$136</td><td>33%</td><td>SBA OIG</td></tr>
+        <tr><td>Other Programs (16 additional)</td><td>~$500</td><td>~$10–20</td><td>2–4%</td><td>PRAC / DOJ</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">Sources: GAO WatchBlog Jul 17, 2025; SBA OIG Report 23-09 (Jun 2023); FBI Field Office Report Jan 2024; PRAC Fraud Alert Jan 2023. Note: The SBA's EIDL program had the highest fraud rate at approximately 33% of all disbursed funds.</p>
+
+    <div class="callout callout-info">
+      <strong>Criminal Convictions:</strong> As of December 2024, the Department of Justice had secured 2,532 criminal convictions related to pandemic relief fraud, with approximately 82% of defendants found guilty. Nearly half of all convicted defendants faced conspiracy charges, indicating organized fraud groups. Congress extended the statute of limitations from 5 to 10 years for PPP and EIDL fraud to allow continued prosecution.
+    </div>
+
+    <!-- HEALTHCARE FRAUD -->
+    <h2 id="healthcare-fraud">6. Healthcare Fraud</h2>
+    <p>Healthcare fraud — primarily against Medicare and Medicaid — represents the single largest category of federal fraud by dollar volume. The False Claims Act (FCA) is the primary civil enforcement tool, and FCA recoveries have reached record levels in recent years.</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>False Claims Act Recoveries by Fiscal Year (2015–2025)</caption>
+      <thead>
+        <tr>
+          <th>Fiscal Year</th>
+          <th>Total FCA Recoveries ($B)</th>
+          <th>Healthcare Share</th>
+          <th>Qui Tam Cases Filed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>FY2015</td><td>$3.5</td><td>~70%</td><td>638</td></tr>
+        <tr><td>FY2016</td><td>$4.7</td><td>~75%</td><td>702</td></tr>
+        <tr><td>FY2017</td><td>$3.7</td><td>~80%</td><td>674</td></tr>
+        <tr><td>FY2018</td><td>$2.9</td><td>~80%</td><td>645</td></tr>
+        <tr><td>FY2019</td><td>$3.0</td><td>~75%</td><td>633</td></tr>
+        <tr><td>FY2020</td><td>$2.2</td><td>~75%</td><td>672</td></tr>
+        <tr><td>FY2021</td><td>$5.6</td><td>~60%</td><td>598</td></tr>
+        <tr><td>FY2022</td><td>$2.2</td><td>~65%</td><td>652</td></tr>
+        <tr><td>FY2023</td><td>$2.7</td><td>~65%</td><td>713</td></tr>
+        <tr><td>FY2024</td><td>$2.9</td><td>~57%</td><td>979</td></tr>
+        <tr><td>FY2025</td><td>$6.8</td><td>~60%</td><td>N/A</td></tr>
+      </tbody>
+    </table>
+    <p class="source-note">Sources: DOJ Press Releases on FCA Settlements FY2015–FY2025; DOJ Jan 16, 2026 (FY2025 record). Note: FY2025 recoveries of $6.8B set an all-time record, surpassing the previous record of $6.2B set in FY2014. Total FCA recoveries since 1986 now exceed $78 billion.</p>
+
+    <div class="callout callout-info">
+      <strong>Medicaid Fraud Control Units (FY2024):</strong> State-level Medicaid Fraud Control Units (MFCUs) reported 817 fraud convictions and 334 patient abuse or neglect convictions in FY2024. Criminal recoveries reached $961 million — the highest in the past 10 years and more than double the rolling 5-year average. (Source: HHS OIG, Mar 2025)
+    </div>
+
+    <!-- STATE FRAUD -->
+    <h2 id="state-fraud">7. State-Level Fraud</h2>
+    <p>Fraud at the state level mirrors federal patterns, with Medicaid, child care assistance, and unemployment insurance being the most commonly exploited programs. The response from state legislatures has varied significantly by party control.</p>
+
+    <h3>Minnesota: A Case Study in Partisan Response</h3>
+    <p>Minnesota became a national focal point for state-level fraud following the "Feeding Our Future" scandal, in which over $250 million in federal child nutrition funds were fraudulently obtained. The case involved organized fraud networks exploiting COVID-era relaxed oversight rules.</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Minnesota Anti-Fraud Legislative Actions (2023–2025)</caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Measure</th>
+          <th>Outcome</th>
+          <th>Party Dynamic</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2023</td>
+          <td>$5M appropriation for grants administration oversight and fraud study</td>
+          <td>Passed (DFL majority)</td>
+          <td>DFL-led; "almost every Republican voted against these ideas" (MN Senate DFL)</td>
+        </tr>
+        <tr>
+          <td>2024</td>
+          <td>10 pages of new grant protections and transparency measures; new oversight team at Dept. of Administration</td>
+          <td>Passed (DFL majority)</td>
+          <td>DFL-led; Republicans largely opposed</td>
+        </tr>
+        <tr>
+          <td>2025</td>
+          <td>SF 856 — Office of the Inspector General (independent statewide OIG)</td>
+          <td>Passed 60–7 (bipartisan)</td>
+          <td>Bipartisan; 60-7 Senate vote</td>
+        </tr>
+        <tr>
+          <td>2025</td>
+          <td>Anti-kickback provisions for Medicaid and CCAP (child care assistance)</td>
+          <td>Passed</td>
+          <td>DFL-led; codified criminal penalties up to 20 years</td>
+        </tr>
+        <tr>
+          <td>2025</td>
+          <td>$4M for AG's Office to fight fraud; $1M for Secretary of State business fraud</td>
+          <td>Passed</td>
+          <td>DFL-led</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="source-note">Source: Minnesota Senate DFL, "Preventing Fraud Against Government Agencies" (2025). Note: The Minnesota situation is notable because the DFL (Democratic-Farmer-Labor) party, which controls the legislature, claims credit for anti-fraud measures while Republicans argue the DFL's own policies enabled the fraud in the first place through relaxed oversight during the pandemic.</p>
+
+    <!-- LEGISLATION -->
+    <h2 id="legislation">8. Anti-Fraud Legislation: What Was Proposed and What Passed</h2>
+    <p>Congress has considered numerous anti-fraud measures over the past decade. The table below documents key bills, their outcomes, and the legislative context. Bills are organized chronologically.</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table legislation-table">
+      <caption>Federal Anti-Fraud Legislation (2016–2026)</caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Bill</th>
+          <th>Purpose</th>
+          <th>Sponsor Party</th>
+          <th>Outcome</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2016</td>
+          <td>Fraud Reduction and Data Analytics Act (S. 2133)</td>
+          <td>Required agencies to implement data analytics to detect fraud before payment</td>
+          <td>R (Sen. Portman)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 114-186)</td>
+          <td>Passed by unanimous consent in both chambers; bipartisan</td>
+        </tr>
+        <tr>
+          <td>2017</td>
+          <td>Social Security Number Fraud Prevention Act (H.R. 624)</td>
+          <td>Restricted SSNs on federal mail documents to prevent identity theft</td>
+          <td>R (Rep. Johnson)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 115-59)</td>
+          <td>Passed by voice vote; bipartisan</td>
+        </tr>
+        <tr>
+          <td>2020</td>
+          <td>Payment Integrity Information Act (S. 375)</td>
+          <td>Consolidated and strengthened improper payment reporting requirements for all federal agencies</td>
+          <td>D (Sen. Carper)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 116-117)</td>
+          <td>Passed Senate by unanimous consent Jul 2019; passed House by voice vote Feb 2020; bipartisan</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td>COVID-19 EIDL Fraud Statute of Limitations Act (H.R. 7334)</td>
+          <td>Extended statute of limitations for EIDL fraud from 5 to 10 years</td>
+          <td>R (Rep. Luetkemeyer)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 117-165)</td>
+          <td>House: 416 Yea, 3 Nay (D: 213-3, R: 203-0); near-unanimous</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td>PPP and Bank Fraud Enforcement Harmonization Act (H.R. 7352)</td>
+          <td>Extended statute of limitations for PPP fraud from 5 to 10 years</td>
+          <td>R (Rep. Luetkemeyer)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 117-166)</td>
+          <td>Passed by voice vote; bipartisan</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td>Pandemic Anti-Fraud Prosecution Act (S. 3538)</td>
+          <td>Extended statute of limitations for all pandemic relief fraud; created DOJ task force</td>
+          <td>R (Sen. Grassley)</td>
+          <td class="outcome-passed">Signed into Law (P.L. 117-229)</td>
+          <td>Passed Senate by unanimous consent; passed House by voice vote; bipartisan</td>
+        </tr>
+        <tr>
+          <td>2024</td>
+          <td>Consequences for Social Security Fraud Act (H.R. 6678)</td>
+          <td>Made Social Security and ID document fraud grounds for deportation/inadmissibility of non-citizens</td>
+          <td>R (Rep. McClintock)</td>
+          <td class="outcome-passed">Passed House (272-155)</td>
+          <td>House: R: 217-0, D: 55-155. Did not advance in Senate under Democrat majority.</td>
+        </tr>
+        <tr>
+          <td>2025</td>
+          <td>Pandemic Unemployment Fraud Enforcement Act (H.R. 1156)</td>
+          <td>Extended statute of limitations for pandemic unemployment fraud from 5 to 10 years</td>
+          <td>R (Rep. Smith)</td>
+          <td class="outcome-pending">Passed House; Pending Senate</td>
+          <td>House: R: 212-0, D: 83-127. Placed on Senate calendar Mar 13, 2025.</td>
+        </tr>
+        <tr>
+          <td>2026</td>
+          <td>Deporting Fraudsters Act (H.R. 1958)</td>
+          <td>Made public benefits fraud (including welfare, Medicaid, SNAP) grounds for deportation of non-citizens</td>
+          <td>R (Rep. Kustoff)</td>
+          <td class="outcome-passed">Passed House (231-186)</td>
+          <td>House: R: 211-0, D: 20-186. Faces uncertain Senate path.</td>
+        </tr>
+        <tr>
+          <td>2026</td>
+          <td>Executive Order: Task Force to Eliminate Fraud (EO)</td>
+          <td>Created interagency task force led by VP Vance to investigate fraud in federal welfare programs</td>
+          <td>R (President Trump)</td>
+          <td class="outcome-passed">Signed Mar 16, 2026</td>
+          <td>Executive action; no Congressional vote required. Targets Medicaid, SNAP, EITC, and other programs.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- VOTING RECORDS -->
+    <h2 id="voting-records">9. Voting Records by Party</h2>
+    <p>The following section presents the voting records on key anti-fraud bills where recorded roll call votes are available. This data is drawn directly from the official records of the Office of the Clerk of the U.S. House of Representatives and the U.S. Senate.</p>
+
+    <div class="chart-container">
+      <canvas id="votingChart" width="700" height="450"></canvas>
+    </div>
+
+    <h3>House Roll Call Votes on Anti-Fraud Legislation</h3>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table voting-table">
+      <caption>House Roll Call Votes on Anti-Fraud Bills — Party Breakdown</caption>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Bill</th>
+          <th>Status</th>
+          <th>R Yea</th>
+          <th>R Nay</th>
+          <th>D Yea</th>
+          <th>D Nay</th>
+          <th>Total</th>
+          <th>R Support</th>
+          <th>D Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jun 8, 2022</td>
+          <td>COVID-19 EIDL Fraud Statute of Limitations Act (H.R. 7334)</td>
+          <td class="outcome-passed">Passed</td>
+          <td>203</td><td>0</td><td>213</td><td>3</td>
+          <td>416–3</td>
+          <td class="pct-high">100%</td>
+          <td class="pct-high">99%</td>
+        </tr>
+        <tr>
+          <td>Jan 31, 2024</td>
+          <td>Consequences for Social Security Fraud Act (H.R. 6678)</td>
+          <td class="outcome-passed">Passed House</td>
+          <td>217</td><td>0</td><td>55</td><td>155</td>
+          <td>272–155</td>
+          <td class="pct-high">100%</td>
+          <td class="pct-low">26%</td>
+        </tr>
+        <tr>
+          <td>Mar 11, 2025</td>
+          <td>Pandemic Unemployment Fraud Enforcement Act (H.R. 1156)</td>
+          <td class="outcome-pending">Passed House</td>
+          <td>212</td><td>0</td><td>83</td><td>127</td>
+          <td>295–127</td>
+          <td class="pct-high">100%</td>
+          <td class="pct-mid">40%</td>
+        </tr>
+        <tr>
+          <td>Mar 18, 2026</td>
+          <td>Deporting Fraudsters Act (H.R. 1958)</td>
+          <td class="outcome-passed">Passed House</td>
+          <td>211</td><td>0</td><td>20</td><td>186</td>
+          <td>231–186</td>
+          <td class="pct-high">100%</td>
+          <td class="pct-low">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Summary: Republican vs. Democratic Support for Anti-Fraud Bills (House)</h3>
+    <div class="chart-container">
+      <canvas id="partyComparisonChart" width="700" height="400"></canvas>
+    </div>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Aggregate Party Support for Anti-Fraud Legislation (House Roll Call Votes, 2022–2026)</caption>
+      <thead>
+        <tr>
+          <th>Party</th>
+          <th>Total Yea Votes</th>
+          <th>Total Nay Votes</th>
+          <th>Average Support Rate</th>
+          <th>Bills with 100% Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Republican</strong></td>
+          <td>843</td>
+          <td>0</td>
+          <td class="pct-high">100%</td>
+          <td>4 of 4</td>
+        </tr>
+        <tr>
+          <td><strong>Democratic</strong></td>
+          <td>371</td>
+          <td>471</td>
+          <td class="pct-low">44%</td>
+          <td>1 of 4 (EIDL Act, 2022)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Senate Votes on Anti-Fraud Legislation</h3>
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Senate Action on Key Anti-Fraud Bills</caption>
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Bill</th>
+          <th>Senate Action</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2019–2020</td>
+          <td>Payment Integrity Information Act (S. 375)</td>
+          <td class="outcome-passed">Passed by Unanimous Consent</td>
+          <td>Bipartisan; sponsored by Sen. Carper (D-DE)</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td>Pandemic Anti-Fraud Prosecution Act (S. 3538)</td>
+          <td class="outcome-passed">Passed by Unanimous Consent</td>
+          <td>Sponsored by Sen. Grassley (R-IA); bipartisan support</td>
+        </tr>
+        <tr>
+          <td>2022</td>
+          <td>COVID-19 EIDL Fraud Statute of Limitations Act (H.R. 7334)</td>
+          <td class="outcome-passed">Passed by Unanimous Consent</td>
+          <td>Bipartisan</td>
+        </tr>
+        <tr>
+          <td>2024</td>
+          <td>Consequences for Social Security Fraud Act (H.R. 6678)</td>
+          <td class="outcome-failed">No Senate Action</td>
+          <td>Passed House 272-155; Senate under Democratic majority did not bring to floor</td>
+        </tr>
+        <tr>
+          <td>2025</td>
+          <td>Pandemic Unemployment Fraud Enforcement Act (H.R. 1156)</td>
+          <td class="outcome-pending">On Senate Calendar (No. 29)</td>
+          <td>Passed House 295-127 (Mar 11, 2025); awaiting Senate floor vote</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ANALYSIS -->
+    <h2 id="analysis">10. Analysis: Are Politicians Doing Their Jobs?</h2>
+
+    <p>The data assembled in this report permits a factual assessment of whether elected officials at the federal level have acted to combat fraud against American taxpayers. The findings are unambiguous in several respects.</p>
+
+    <h3>What the Voting Record Shows</h3>
+    <p>On every recorded House roll call vote on anti-fraud legislation from 2022 to 2026, <strong>Republicans voted unanimously in favor</strong> — a combined 843 Yea votes and zero Nay votes across four bills. Democrats, by contrast, cast a combined 471 Nay votes against these same measures, with an average support rate of approximately 44%.</p>
+
+    <p>The pattern is consistent and intensifying. In 2022, the COVID-19 EIDL Fraud Statute of Limitations Act passed with near-unanimous bipartisan support (99% Democratic support). By 2024, Democratic support for the Consequences for Social Security Fraud Act had dropped to 26%. By March 2026, only 10% of House Democrats voted for the Deporting Fraudsters Act, with 186 Democrats voting against a bill that would deport non-citizens convicted of welfare fraud.</p>
+
+    <div class="callout callout-warning">
+      <strong>The Pattern of Inaction:</strong> The Consequences for Social Security Fraud Act (H.R. 6678) passed the House with 272 votes on January 31, 2024. Under the Democratic-controlled Senate of the 118th Congress, it was never brought to the floor for a vote. The bill would have made Social Security fraud and identity document fraud grounds for deportation of non-citizens. The Senate's failure to act meant this measure died without a Senate vote.
+    </div>
+
+    <h3>The Fraud-Enablement Question</h3>
+    <p>The question of whether political inaction enables fraud is not merely rhetorical. Several specific mechanisms connect legislative choices to fraud outcomes:</p>
+
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Legislative Inaction and Its Fraud Consequences</caption>
+      <thead>
+        <tr>
+          <th>Legislative Failure</th>
+          <th>Consequence</th>
+          <th>Estimated Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Failure to fund robust EITC verification (ongoing, 2015–2026)</td>
+          <td>EITC maintains 21–33% improper payment rate; IRS lacks resources to verify claims</td>
+          <td>~$15–22B/year</td>
+        </tr>
+        <tr>
+          <td>Relaxed pandemic relief controls (2020–2021)</td>
+          <td>Enabled $300B+ in COVID relief fraud; identity verification waived for speed</td>
+          <td>$300B+ (one-time)</td>
+        </tr>
+        <tr>
+          <td>Senate inaction on H.R. 6678 (2024)</td>
+          <td>No deportation consequence for non-citizen Social Security fraud; reduced deterrence</td>
+          <td>Deterrence effect unmeasured</td>
+        </tr>
+        <tr>
+          <td>Slow Senate action on H.R. 1156 (2025–present)</td>
+          <td>Statute of limitations for pandemic UI fraud may expire before prosecution</td>
+          <td>Hundreds of billions at risk</td>
+        </tr>
+        <tr>
+          <td>Failure to pass comprehensive Medicaid fraud prevention legislation</td>
+          <td>Medicaid improper payments remain ~$50B/year; anti-kickback enforcement remains weak</td>
+          <td>~$50B/year</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>The Demographic Dimension</h3>
+    <p>Several of the most contested anti-fraud bills specifically address fraud committed by non-citizens — including the Consequences for Social Security Fraud Act (H.R. 6678) and the Deporting Fraudsters Act (H.R. 1958). In both cases, Republicans voted unanimously in favor while the majority of Democrats voted against. Critics of these bills argue that existing law already provides deportation grounds for fraud convictions and that the bills are primarily symbolic. Supporters argue that the bills create explicit, mandatory consequences that current law does not reliably produce.</p>
+
+    <p>The EITC, which carries the highest improper payment rate of any federal program (33.5% in FY2024), has a well-documented pattern of fraudulent claims by individuals using false or stolen Social Security numbers. Multiple proposals to strengthen EITC verification have been introduced over the past decade; none have been enacted with meaningful enforcement funding.</p>
+
+    <h3>The 2026 Executive Response</h3>
+    <p>On March 16, 2026, President Trump signed an executive order establishing the <strong>Task Force to Eliminate Fraud</strong>, led by Vice President Vance. The order directs an interagency review of fraud in federal welfare programs including Medicaid, SNAP, EITC, and housing assistance. The White House fact sheet cited Minnesota's Medicaid fraud as a specific example, noting that "Feeding Our Future stole over $250 million" from child nutrition programs.</p>
+
+    <p>The executive order represents an acknowledgment that Congressional action alone has been insufficient to address fraud at scale. Whether the task force produces lasting structural reforms or serves primarily as a political messaging vehicle remains to be seen.</p>
+
+    <h3>Conclusion</h3>
+    <p>The data in this report supports several conclusions:</p>
+    <ol>
+      <li><strong>Fraud is growing.</strong> Consumer fraud losses have increased more than 680% since 2015. Federal improper payments, while down from their COVID-era peak, remain at historically elevated levels ($186B in FY2025).</li>
+      <li><strong>Republicans have consistently supported anti-fraud legislation.</strong> On every recorded House roll call vote from 2022 to 2026, Republicans voted 100% in favor of anti-fraud measures.</li>
+      <li><strong>Democratic support for anti-fraud legislation has declined sharply.</strong> From near-unanimity in 2022 (99% support for EIDL fraud bill) to 10% support for the Deporting Fraudsters Act in 2026, Democratic opposition to anti-fraud measures has grown — particularly on bills targeting fraud by non-citizens.</li>
+      <li><strong>Senate inaction has blocked some anti-fraud measures.</strong> The Democratic-controlled Senate of the 118th Congress (2023–2024) did not bring the Consequences for Social Security Fraud Act to a floor vote despite it passing the House with 272 votes.</li>
+      <li><strong>The largest fraud vectors remain largely unaddressed.</strong> The EITC's 33% improper payment rate, Medicaid's $50B annual improper payments, and the ongoing pandemic fraud prosecutions all represent areas where stronger legislative action could reduce losses.</li>
+    </ol>
+
+    <p>Whether the pattern of Democratic opposition to specific anti-fraud bills reflects principled policy disagreement, concern about civil liberties implications, or political calculation is a matter of interpretation. What is not a matter of interpretation is the voting record itself: it is documented, public, and consistent.</p>
+
+    <!-- SOURCES -->
+    <h2 id="sources">11. Sources</h2>
+    <table border="1" cellpadding="8" cellspacing="0" class="data-table">
+      <caption>Primary Sources Used in This Report</caption>
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Document / URL</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>GAO</td><td>GAO-25-107552: Agency Reporting of Payment Integrity Information</td><td>Jan 2025</td></tr>
+        <tr><td>GAO</td><td>GAO-26-109034: Federal Information Transparency</td><td>Mar 2026</td></tr>
+        <tr><td>GAO</td><td>GAO-26-108850: Fraud and Improper Payments (testimony)</td><td>Jan 2026</td></tr>
+        <tr><td>GAO</td><td>WatchBlog: "Fraud and Its Consequences — Who Steals from Federal Programs"</td><td>Jul 2025</td></tr>
+        <tr><td>FTC</td><td>Consumer Sentinel Network Data Book 2024</td><td>Mar 2025</td></tr>
+        <tr><td>FBI / IC3</td><td>2024 Internet Crime Report</td><td>Apr 2025</td></tr>
+        <tr><td>DOJ</td><td>False Claims Act Settlements FY2024 ($2.9B)</td><td>Jan 2025</td></tr>
+        <tr><td>DOJ</td><td>False Claims Act Settlements FY2025 ($6.8B, record)</td><td>Jan 2026</td></tr>
+        <tr><td>SBA OIG</td><td>Report 23-09: COVID-19 Pandemic EIDL and PPP Loan Fraud Landscape</td><td>Jun 2023</td></tr>
+        <tr><td>HHS OIG</td><td>Medicaid Fraud Control Units Annual Report FY2024</td><td>Mar 2025</td></tr>
+        <tr><td>House Clerk</td><td>Roll Call 247 (H.R. 7334, COVID EIDL Fraud Act)</td><td>Jun 2022</td></tr>
+        <tr><td>House Clerk</td><td>Roll Call 27 (H.R. 6678, Consequences for SS Fraud Act)</td><td>Jan 2024</td></tr>
+        <tr><td>House Clerk</td><td>Roll Call 68 (H.R. 1156, Pandemic UI Fraud Enforcement Act)</td><td>Mar 2025</td></tr>
+        <tr><td>House Clerk</td><td>Roll Call 94 (H.R. 1958, Deporting Fraudsters Act)</td><td>Mar 2026</td></tr>
+        <tr><td>Congress.gov</td><td>S.375 — Payment Integrity Information Act of 2019 (P.L. 116-117)</td><td>Mar 2020</td></tr>
+        <tr><td>White House</td><td>EO: Establishing the Task Force to Eliminate Fraud</td><td>Mar 16, 2026</td></tr>
+        <tr><td>MN Senate DFL</td><td>"Preventing Fraud Against Government Agencies"</td><td>2025</td></tr>
+        <tr><td>OMB / PaymentAccuracy.gov</td><td>Historical improper payments data FY2015–FY2023</td><td>Various</td></tr>
+      </tbody>
+    </table>
+
+    <p class="disclaimer">
+      <strong>Methodology Note:</strong> This report relies exclusively on official government sources (GAO, OMB, FTC, FBI, DOJ, House Clerk) and congressional records. Voting data is drawn from official roll call records. Fraud estimates are drawn from official government reports and represent the best available data; actual fraud losses are likely higher than reported figures due to underreporting and measurement limitations. This report does not express a partisan viewpoint; it presents documented facts and allows readers to draw their own conclusions.
+    </p>
+
+  </div><!-- end site-main -->
+  <hr>
+  <div class="site-footer">
+    <p>Werner Strydom &mdash; <a href="https://github.com/wernerstrydom/demo-site">Source</a> &mdash; Data current as of March 2026</p>
+  </div>
+</div><!-- end container -->
+
+<script src="fraud-report.js" type="text/javascript"></script>
+</body>
+</html>
