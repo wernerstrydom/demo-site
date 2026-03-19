@@ -2,132 +2,200 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Writing - Werner Strydom</title>
-<meta name="description" content="Technical writing on infrastructure, security, and systems engineering">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Essays and opinions on technology, systems design, and engineering trade-offs.">
+<title>Writing &mdash; Werner Strydom</title>
 <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
+<div class="site-header">
 <h1>Writing</h1>
-</header>
+<p class="tagline">Opinions, observations, and arguments. Read critically.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="writing.html">Writing</a></li>
 <li><a href="lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<article>
-<h2>Configuration Management Doesn't Guarantee Predictable Outcomes</h2>
-<p><time>2026-02-11</time></p>
+<p>These are essays, not tutorials. They are intended to make you think, not to tell you what to do. Where I express an opinion, it is clearly an opinion. Where I describe a trade-off, I try to present both sides honestly. You should disagree with some of this. That is the point.</p>
 
-<p>Configuration management tools enforce identical configuration files across servers. Ansible, Puppet, Chef, and Salt excel at this. The problem: identical configurations don't guarantee identical behavior.</p>
+<ul class="article-list">
 
-<p>Two servers with identical nginx.conf files behave differently when one runs kernel 5.4 and the other runs 5.15. Network buffer handling changed. TCP congestion control algorithms differ. The configuration is identical. The behavior is not.</p>
+<li>
+<div class="article-title"><a href="#abstraction-cost">The Cost of Abstraction</a></div>
+<div class="article-summary">Every abstraction hides complexity. The question is whether you are hiding it from yourself.</div>
+</li>
 
-<p>Filesystem choice matters. XFS handles small files differently than ext4. ZFS has different I/O patterns than both. The application configuration is identical. The performance characteristics are not.</p>
+<li>
+<div class="article-title"><a href="#ha-tradeoff">High Availability is a Trade-off, Not a Feature</a></div>
+<div class="article-summary">HA adds complexity, maintenance burden, and new failure modes. It is worth it in some contexts. Not all.</div>
+</li>
 
-<p>CPU architecture influences timing. An ARM server and an x86 server with identical configurations execute instructions differently. Memory ordering guarantees differ. Cache behavior varies.</p>
+<li>
+<div class="article-title"><a href="#eol-hardware">The Case for Running End-of-Life Hardware</a></div>
+<div class="article-summary">EOL hardware is not a liability. It is a constraint. Constraints are where learning happens.</div>
+</li>
 
-<p>Configuration management has value. It reduces manual work. It documents intent. It prevents configuration drift. But it doesn't model the relationships between configuration, system properties, and behavior.</p>
+<li>
+<div class="article-title"><a href="#monitoring-debuggability">Monitoring Is Not Debuggability</a></div>
+<div class="article-summary">Knowing something is broken is not the same as knowing why. Most monitoring tells you the former. Few systems are designed for the latter.</div>
+</li>
 
-<p>Testing actual behavior matters more than comparing configuration files. Load testing reveals performance differences. Chaos engineering exposes failure modes. Integration testing catches dependency issues.</p>
+<li>
+<div class="article-title"><a href="#progressive-web">Progressive Enhancement Is an Argument About Values</a></div>
+<div class="article-summary">Building websites that work everywhere is not a technical constraint. It is a statement about who the web is for.</div>
+</li>
 
-<p>The question is not "are configurations identical" but "do systems behave identically under the same conditions." Configuration management answers the first question. Testing answers the second.</p>
-</article>
-
-<hr>
-
-<article>
-<h2>Compliance Frameworks Measure Activity, Not Risk Reduction</h2>
-<p><time>2026-01-15</time></p>
-
-<p>PCI-DSS, SOC 2, ISO 27001, and HIPAA measure whether you performed required activities. They don't measure whether those activities reduced your actual risk.</p>
-
-<p>Example: patch management requirements specify applying patches within 30 days of release. This is measurable. Auditors verify patch application dates. Organizations optimize for this metric.</p>
-
-<p>What the metric doesn't capture: whether the vulnerability was exploitable in your environment, whether compensating controls already mitigated the risk, whether the patch introduced new vulnerabilities, or whether testing occurred before deployment.</p>
-
-<p>Result: patches get applied to meet deadlines without understanding impact. Systems break. Workarounds accumulate. The compliance metric is green. The risk is unchanged or increased.</p>
-
-<p>Another example: firewall requirements. Compliance requires network segmentation and firewall rules. Auditors verify the firewall exists and rules are documented. The metric is satisfied.</p>
-
-<p>What the metric doesn't capture: whether the firewall rules actually prevent the attack paths that matter in your environment, whether exceptions have created holes, whether monitoring detects violations, or whether the rules are tested.</p>
-
-<p>Compliance is a floor, not a ceiling. Meeting requirements means you did the minimum. Security requires understanding your threat model and risk surface, then addressing them even when compliance doesn't require it.</p>
-
-<p>Ask different questions. Not "did we patch within 30 days" but "what is the exploitability and impact of this vulnerability in our specific environment." Not "do we have a firewall" but "what attack paths exist and how do we detect them."</p>
-
-<p>Compliance and security are related but distinct. Optimizing for compliance metrics doesn't optimize for risk reduction.</p>
-</article>
+</ul>
 
 <hr>
 
-<article>
-<h2>Infrastructure Definitions Have Different Properties Than Application Code</h2>
-<p><time>2025-12-20</time></p>
+<h2 id="abstraction-cost">The Cost of Abstraction</h2>
+<p class="article-meta">March 2026</p>
 
-<p>Terraform, CloudFormation, and Pulumi treat infrastructure definitions as code. This provides version control, code review, and automation. The analogy breaks down when you consider failure modes and operational constraints.</p>
+<p>Abstractions are the fundamental tool of software engineering. They allow you to reason about complex systems by hiding irrelevant detail. Without them, nothing of any scale would be possible. This is not in dispute.</p>
 
-<p>Application code runs in an environment. Infrastructure code creates the environment. When application code fails, you restart the process. When infrastructure code fails, you might not have an environment to run anything.</p>
+<p>What is in dispute is whether the abstractions you are using are hiding the right things, from the right people, at the right time.</p>
 
-<p>Testing differs. Application code can be unit tested with mocks. Infrastructure code must be tested against real cloud APIs with real eventual consistency, real rate limits, and real quota errors. Mocking AWS APIs doesn't catch the issues that matter.</p>
+<p>Consider a container orchestration platform. It abstracts away the question of which physical machine runs your workload. This is useful: you can scale, reschedule, and replace nodes without rewriting your application. The abstraction earns its cost. But the same platform also abstracts away networking, storage, scheduling, and security policy. Each layer hides complexity. Each layer also hides failure modes.</p>
 
-<p>Deployment differs. Application deployments can be rolled back by restarting with the previous version. Infrastructure rollbacks might involve DNS propagation delays, load balancer health check periods, or database schema migrations. The rollback path is not symmetric with the deployment path.</p>
+<p>When something goes wrong — and it will go wrong — the abstraction that protected you from complexity now stands between you and the diagnosis. The question is not whether to use abstractions. The question is whether you understand what is underneath them well enough to reason about failures.</p>
 
-<p>State management differs. Application code is typically stateless or uses external state stores. Infrastructure code manages stateful resources where deletion loses data. The blast radius of mistakes is larger.</p>
+<blockquote>
+<p>An abstraction you cannot see through is a liability, not an asset, when the system misbehaves.</p>
+</blockquote>
 
-<p>Error handling differs. Application errors affect requests. Infrastructure errors affect the platform. A bug in application code might return 500 errors. A bug in infrastructure code might delete production databases.</p>
+<p>The homelab is a partial answer to this problem. Running a firewall on bare metal, configuring VRRP by hand, managing connection state synchronisation explicitly — these are not efficient uses of time compared to clicking through a vendor GUI. But they produce engineers who understand what the GUI is doing. That understanding is not academic. It is the difference between a 30-minute outage and a 3-hour one.</p>
 
-<p>The better model: infrastructure as data with code to interpret it. The data describes desired state in a declarative format. The code handles state transitions, error recovery, and rollback logic. This separation makes testing easier and failures more contained.</p>
-
-<p>Infrastructure as code has value. But treating it exactly like application code ignores the different failure modes.</p>
-</article>
+<p>The practical question to ask of any abstraction is: <em>when this breaks, will I be able to reason about why?</em> If the answer is no, you have accepted a risk. You may have accepted it knowingly and correctly. But you should have accepted it knowingly.</p>
 
 <hr>
 
-<article>
-<h2>Monitoring Shows Symptoms, Not Root Causes</h2>
-<p><time>2025-11-10</time></p>
+<h2 id="ha-tradeoff">High Availability is a Trade-off, Not a Feature</h2>
+<p class="article-meta">February 2026</p>
 
-<p>Prometheus, Datadog, and CloudWatch collect metrics and generate alerts. They tell you response time increased or error rate spiked. They don't tell you why.</p>
+<p>High availability is sold as a feature. It is not. It is a trade-off. The trade is: you accept more complexity, more maintenance burden, and new categories of failure in exchange for reduced exposure to a specific class of failure — single-node downtime.</p>
 
-<p>The gap between symptom and cause is where incident response time goes. You know response time increased. You need to determine if the cause is database query performance, network latency, upstream service degradation, resource exhaustion, or something else.</p>
+<p>This trade is worth making in many production contexts. It is not automatically worth making everywhere, and it is almost never worth making without understanding what you are trading.</p>
 
-<p>Monitoring shows effects. Finding causes requires tracing through the system. This requires understanding relationships between components that monitoring tools don't model.</p>
+<p>Consider a two-node VRRP setup with keepalived and conntrackd, as documented in the <a href="lab/devices/oak03ufw01.html">oak03ufw01 device page</a>. The configuration provides failover in under 3 seconds when the primary node fails. Established connections survive. This is genuinely useful.</p>
 
-<p>Common response: add more metrics. This helps but doesn't solve the fundamental problem. More metrics means more data to correlate. The relationship between metrics matters more than the metrics themselves.</p>
+<p>But the same configuration introduces split-brain scenarios. If the synchronisation network between the two nodes fails while both nodes remain operational, both claim the virtual IP. Traffic becomes unpredictable. Resolving split-brain requires manual intervention. The monitoring must detect it. An operator must investigate. The STONITH mechanisms that prevent split-brain in enterprise HA clusters require out-of-band management hardware that the Sophos appliances do not have.</p>
 
-<p>Distributed tracing helps by showing request paths through services. Jaeger and Zipkin visualize these paths. But traces still require knowing what to look for. The trace shows what happened. Understanding why requires knowing how the system should work.</p>
+<p>The question is not whether HA is good or bad. The question is: <em>what failure modes does this configuration introduce, and are they less severe than the failure modes it eliminates?</em></p>
 
-<p>Example: response time increased. The trace shows the database query took longer. Why did the query take longer? Was it query plan changes, lock contention, resource exhaustion, network issues, or something else. The trace doesn't answer this.</p>
+<table border="1" cellpadding="8" cellspacing="0">
+<tr>
+<th>Failure mode eliminated</th>
+<th>Failure mode introduced</th>
+</tr>
+<tr>
+<td>Single-node hardware failure</td>
+<td>Split-brain (both nodes claim VIP)</td>
+</tr>
+<tr>
+<td>Single-node OS crash</td>
+<td>Configuration drift between nodes</td>
+</tr>
+<tr>
+<td>Single-node maintenance window</td>
+<td>Increased maintenance surface (two nodes)</td>
+</tr>
+<tr>
+<td>Single-node network failure</td>
+<td>Sync network failure (new dependency)</td>
+</tr>
+</table>
 
-<p>The solution is designing systems for debuggability. This means structured logging with correlation IDs, clear error messages that include context, documentation of dependencies and failure modes, and runbooks for common issues.</p>
+<p>In a home lab, the educational value of understanding HA justifies the complexity. In a production environment, the calculus depends on your specific availability requirements, your operational maturity, and your ability to monitor and respond to the new failure modes. HA that is not regularly tested is not HA. It is the illusion of HA.</p>
 
-<p>Monitoring is necessary but not sufficient. It tells you something is wrong. Debuggability tells you what and why.</p>
-</article>
-
-</main>
+<p>Before implementing HA, ask: <em>when was the last time we tested failover?</em> If the answer is never, or more than six months ago, you do not have HA. You have a second node that has never been proven to work.</p>
 
 <hr>
 
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
+<h2 id="eol-hardware">The Case for Running End-of-Life Hardware</h2>
+<p class="article-meta">January 2026</p>
+
+<p>End-of-life hardware receives no security patches. This is a real risk and should not be dismissed. If you are running EOL hardware in a context where it is exposed to untrusted networks or handles sensitive data without compensating controls, you are making a poor decision.</p>
+
+<p>That said, the reflexive dismissal of EOL hardware as universally unsuitable is also wrong. It conflates risk with context. The relevant questions are: what is the threat model, what compensating controls exist, and what is the value of running the hardware?</p>
+
+<p>The homelab runs a Power Mac G4 (PowerPC, 2001), an SGI Indy (MIPS R4600, 1993), and a Sun Ultra 10 (SPARC IIi, 1999). These machines receive no vendor support. They run software that is decades old. They are also isolated on a dedicated VLAN with no inbound access from untrusted networks. The risk is managed, not eliminated.</p>
+
+<p>The value is concrete. Writing software that runs on PowerPC, MIPS, and SPARC forces you to confront assumptions that x86 development conceals:</p>
+
+<ul>
+<li>Endianness is not a given. Big-endian architectures expose bugs in code that assumes little-endian byte order.</li>
+<li>Memory alignment matters. RISC architectures fault on unaligned memory access. x86 handles it in hardware, masking the bug.</li>
+<li>Instruction set constraints are real. Code that runs efficiently on a modern out-of-order x86 core may perform poorly on an in-order MIPS pipeline.</li>
+<li>Compiler assumptions are visible. Software that assumes 64-bit pointers, or assumes a particular calling convention, fails loudly on these platforms.</li>
+</ul>
+
+<p>Running diverse hardware is a form of adversarial testing. It surfaces assumptions. Surfaced assumptions can be corrected. Hidden assumptions become production incidents.</p>
+
+<p>This is also why this website works on browsers from the year 2000. Testing on Netscape Navigator 4 and Internet Explorer 5 is not nostalgia. It is a discipline that forces you to separate content from presentation, and to build systems that degrade gracefully rather than failing completely.</p>
+
+<hr>
+
+<h2 id="monitoring-debuggability">Monitoring Is Not Debuggability</h2>
+<p class="article-meta">December 2025</p>
+
+<p>Monitoring tells you that something is wrong. Debuggability tells you why. These are different problems, and conflating them produces systems that are well-monitored but poorly understood.</p>
+
+<p>A Prometheus alert fires. CPU usage on a node is at 95%. The alert is correct. The monitoring is working. Now what? You SSH into the node. You run <code>top</code>. You see a process consuming CPU. You kill it. The alert resolves. Two hours later, the alert fires again.</p>
+
+<p>This is not a monitoring problem. This is a debuggability problem. The monitoring told you the symptom. It did not tell you the cause. Without understanding the cause, the intervention was palliative, not corrective.</p>
+
+<p>Debuggability requires different investments than monitoring. Monitoring is about aggregation and alerting. Debuggability is about context, correlation, and causation. Specifically:</p>
+
+<ul>
+<li><strong>Structured logging with correlation IDs</strong> allows you to trace a request across services. Without correlation IDs, logs from different services are unconnected data points.</li>
+<li><strong>Meaningful error messages</strong> include context: what was being attempted, what state the system was in, what the expected and actual values were. "Connection refused" is a symptom. "Connection to database replica at 10.0.10.5:5432 refused after 3 retries; primary at 10.0.10.4:5432 is reachable" is debuggable.</li>
+<li><strong>Documented failure modes</strong> allow operators to match observed symptoms to known causes. This is not glamorous work. It is the difference between a 20-minute diagnosis and a 4-hour one.</li>
+<li><strong>Runbooks</strong> encode institutional knowledge. They are not a substitute for understanding, but they prevent the same diagnosis from being performed from scratch every time.</li>
+</ul>
+
+<p>The question to ask of any system you operate is: <em>if this system fails at 3am, can the on-call engineer diagnose the cause without domain expertise?</em> If the answer is no, the system is not sufficiently debuggable, regardless of how many dashboards you have.</p>
+
+<hr>
+
+<h2 id="progressive-web">Progressive Enhancement Is an Argument About Values</h2>
+<p class="article-meta">November 2025</p>
+
+<p>Progressive enhancement is a web development technique. It is also an argument about values. The technique is: build a baseline that works everywhere, then add layers of enhancement for browsers that support them. The argument is: the web should be accessible to everyone, not just those with modern hardware and fast connections.</p>
+
+<p>The technique is not difficult. HTML that is semantically correct and does not depend on JavaScript to render content works on any browser that can parse HTML. This includes browsers from 1995. It includes text-mode browsers like Lynx. It includes screen readers. It includes search engine crawlers. The baseline is free, or close to it, if you build it first.</p>
+
+<p>The reason most websites do not do this is not technical. It is cultural. The default in modern web development is to start with a JavaScript framework and add content. The baseline is JavaScript-rendered HTML. Remove JavaScript, and you get a blank page. This is not a technical constraint. It is a choice, made implicitly, to exclude users who cannot or do not run JavaScript.</p>
+
+<blockquote>
+<p>A website that requires JavaScript to display text has decided that some users do not deserve to read it.</p>
+</blockquote>
+
+<p>This is not an argument against JavaScript. JavaScript enables genuinely useful things: interactive interfaces, real-time updates, offline capability. The argument is about sequencing. Build the content layer first. Build it so it works without anything else. Then add JavaScript as an enhancement, not a prerequisite.</p>
+
+<p>The same principle applies beyond the web. Systems that degrade gracefully under partial failure are more reliable than systems that fail completely. APIs that return useful partial responses when some dependencies are unavailable are more useful than APIs that return errors. The pattern is general: design for the degraded case first, then enhance.</p>
 
 </div>
 
-<script src="enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="index.html">Home</a> &mdash; <a href="https://github.com/wernerstrydom/demo-site">Source</a></p>
+</div>
+
+</div>
+<script src="enhance.js" type="text/javascript"></script>
 </body>
 </html>

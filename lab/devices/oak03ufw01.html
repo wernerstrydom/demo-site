@@ -2,162 +2,179 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>oak03ufw01 - Werner Strydom</title>
-<meta name="description" content="Secondary Ubuntu firewall for high availability testing">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="oak03ufw01 — secondary firewall, Sophos SG 210v3, Ubuntu 24.04, VRRP backup.">
+<title>oak03ufw01 &mdash; Devices &mdash; Lab &mdash; Werner Strydom</title>
 <link rel="stylesheet" href="../../styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
+<div class="site-header">
 <h1>oak03ufw01</h1>
-</header>
+<p class="tagline">Secondary firewall. VRRP backup.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="../../index.html">Home</a></li>
 <li><a href="../../writing.html">Writing</a></li>
 <li><a href="../../lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<h2>Overview</h2>
+<p class="breadcrumb"><a href="../../lab.html">Lab</a> &rsaquo; <a href="../../lab-devices.html">Devices</a> &rsaquo; oak03ufw01</p>
 
-<p>oak03ufw01 is a secondary Ubuntu-based firewall running on <a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> hardware. It serves as a testbed for high availability configurations and failover scenarios.</p>
+<h2>Identity</h2>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table border="1" cellpadding="6" cellspacing="0" class="info-table">
+<tr><td>Hostname</td><td>oak03ufw01.lab.internal</td></tr>
+<tr><td>Hardware</td><td><a href="../types/sophos-sg-210v3.html">Sophos SG 210v3</a></td></tr>
+<tr><td>OS</td><td>Ubuntu Server 24.04 LTS</td></tr>
+<tr><td>Role</td><td>Secondary firewall, VRRP backup, HA testing</td></tr>
+<tr><td>Management IP</td><td>10.0.10.22 (VLAN 10)</td></tr>
+<tr><td>VRRP priority</td><td>90 (backup)</td></tr>
+<tr><td>Deployed</td><td>2024-12-03</td></tr>
+<tr><td>Status</td><td><span class="status-operational">Operational</span></td></tr>
+</table>
+
+<h2>Role and rationale</h2>
+
+<p>oak03ufw01 is the secondary firewall. In normal operation, it holds no virtual IPs and forwards no traffic. Its purpose is to assume the gateway role if oak02ufw01 fails.</p>
+
+<p>A single firewall is a single point of failure. For a homelab, a single point of failure is acceptable — downtime has no business consequence. The reason to run a second firewall is educational: understanding how HA failover works requires a working HA setup. oak03ufw01 makes the concepts of VRRP, connection state synchronisation, and split-brain concrete rather than theoretical.</p>
+
+<p>This is the correct reason to run HA in a homelab. The incorrect reason is to claim production-grade availability without understanding the failure modes HA introduces. See <a href="../../writing.html#ha-tradeoff">High Availability is a Trade-off, Not a Feature</a>.</p>
+
+<h2>Network interfaces</h2>
+
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>Property</th>
-<th>Value</th>
+<th>Interface</th>
+<th>VLAN</th>
+<th>IP address</th>
+<th>Role</th>
 </tr>
 <tr>
-<td>Hostname</td>
-<td>oak03ufw01.lab</td>
+<td>enp1s0</td>
+<td>10 (Management)</td>
+<td>10.0.10.22/24</td>
+<td>Management (physical)</td>
 </tr>
 <tr>
-<td>Hardware</td>
-<td><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a></td>
+<td>enp1s0.20</td>
+<td>20 (Production)</td>
+<td>10.0.20.22/24</td>
+<td>Production (physical, standby)</td>
 </tr>
 <tr>
-<td>OS</td>
-<td>Ubuntu Server 24.04 LTS</td>
+<td>enp1s0.30</td>
+<td>30 (Lab)</td>
+<td>10.0.30.22/24</td>
+<td>Lab (physical, standby)</td>
 </tr>
 <tr>
-<td>Role</td>
-<td>Secondary firewall/HA testing</td>
+<td>enp1s0.40</td>
+<td>40 (Vintage)</td>
+<td>10.0.40.22/24</td>
+<td>Vintage (physical, standby)</td>
 </tr>
 <tr>
-<td>Management IP</td>
-<td>10.0.10.22</td>
+<td>enp1s0.50</td>
+<td>50 (IoT)</td>
+<td>10.0.50.22/24</td>
+<td>IoT (physical, standby)</td>
 </tr>
 <tr>
-<td>Deployed</td>
-<td>2024-12-03</td>
+<td>enp1s1</td>
+<td>n/a</td>
+<td>192.168.100.2/30</td>
+<td>VRRP/conntrackd sync link (direct to oak02ufw01)</td>
 </tr>
 </table>
 
-<h2>Motivation</h2>
-
-<p>Single firewall creates a single point of failure. Testing high availability requires two devices. oak03ufw01 provides the second node for HA experiments.</p>
-
-<p>The goal is understanding how commercial HA solutions work. VRRP, keepalived, and connection state synchronization are concepts. This device makes them concrete.</p>
-
-<h2>Configuration</h2>
-
-<p>The base configuration mirrors <a href="oak02ufw01.html">oak02ufw01</a>. Same Ubuntu version, same network layout, same firewall rules. The differences are hostname, IP addresses, and HA-specific configuration.</p>
-
-<p>This symmetry is intentional. HA requires identical configurations except for node-specific values. Testing configuration management tools (Ansible) benefits from this setup.</p>
-
-<h2>High Availability Setup</h2>
-
-<p>keepalived provides VRRP-based failover. Both firewalls run keepalived. One is MASTER, the other is BACKUP. They share a virtual IP (VIP) that floats between them.</p>
-
-<p>Example keepalived configuration:</p>
+<h2>VRRP configuration</h2>
 
 <pre>
-vrrp_instance VI_1 {
+vrrp_instance VI_MGMT {
     state BACKUP
-    interface br20
-    virtual_router_id 51
+    interface enp1s0
+    virtual_router_id 10
     priority 90
     advert_int 1
-    
+    virtual_ipaddress {
+        10.0.10.1/24
+    }
+}
+
+vrrp_instance VI_PROD {
+    state BACKUP
+    interface enp1s0.20
+    virtual_router_id 20
+    priority 90
+    advert_int 1
     virtual_ipaddress {
         10.0.20.1/24
     }
 }
 </pre>
 
-<p>oak02ufw01 has priority 100 (MASTER). oak03ufw01 has priority 90 (BACKUP). When oak02ufw01 fails, oak03ufw01 assumes the VIP and becomes MASTER.</p>
+<p>When oak02ufw01 stops sending VRRP advertisements, oak03ufw01 detects the absence within 3 seconds and assumes the virtual IPs. It begins forwarding traffic immediately. Established connections are preserved if conntrackd state synchronisation is current.</p>
 
-<h2>Connection State Synchronization</h2>
+<h2>Split-brain risk</h2>
 
-<p>conntrackd synchronizes connection tracking state between firewalls. When failover occurs, established connections continue without interruption.</p>
+<p>Split-brain occurs when both nodes believe they are the VRRP master. This happens if the sync link (enp1s1) fails while both nodes remain operational. Both nodes claim the virtual IPs. ARP responses from two different MAC addresses for the same IP cause unpredictable routing on the network.</p>
 
-<p>Configuration at <code>/etc/conntrackd/conntrackd.conf</code>. The firewalls exchange state over a dedicated sync interface. UDP multicast carries state updates.</p>
+<p>Detection: monitor for duplicate ARP responses on the network. Prometheus with an ARP monitoring exporter can detect this condition. Resolution requires manual intervention: determine which node is the intended master, stop keepalived on the other, and verify the sync link.</p>
 
-<p>This works for stateful connections. Stateless protocols (UDP without connection tracking) don't benefit from synchronization.</p>
+<p>Prevention via STONITH (fencing) is not available on this hardware. The Sophos SG 210v3 has no IPMI or out-of-band management interface. This is a known limitation. The risk is accepted for a lab environment. For production, hardware with IPMI is required for reliable HA.</p>
 
-<h2>Testing Failover</h2>
+<h2>Failover testing</h2>
 
-<p>Testing involves stopping keepalived on the MASTER. The BACKUP detects the failure within 3 seconds (3x advert_int). It assumes the VIP and starts forwarding traffic.</p>
+<p>Failover is tested monthly. Procedure:</p>
 
-<p>Established SSH connections survive failover if conntrackd is working. New connections work immediately. The failover is transparent to clients.</p>
+<ol>
+<li>Verify oak03ufw01 is operational: <code>systemctl status keepalived conntrackd</code>.</li>
+<li>Stop keepalived on oak02ufw01: <code>systemctl stop keepalived</code>.</li>
+<li>Verify oak03ufw01 assumes VIPs: <code>ip addr show</code> should show the virtual IPs on oak03ufw01 within 3 seconds.</li>
+<li>Verify connectivity: ping 10.0.20.1 from a Production VLAN device. Establish an SSH session before failover and verify it survives.</li>
+<li>Restart keepalived on oak02ufw01. Verify it preempts oak03ufw01 and resumes as master.</li>
+<li>Document the test date and result.</li>
+</ol>
 
-<p>Testing also includes network cable disconnection, power failure simulation, and kernel panics. Each scenario validates different failure modes.</p>
+<p>Untested HA is not HA. It is a second node that has never been proven to work. Monthly testing is the minimum acceptable interval.</p>
 
-<h2>Challenges</h2>
+<h2>Lessons from operating this setup</h2>
 
-<p>Split-brain scenarios occur when both nodes think they are MASTER. This happens if the sync network fails but both nodes remain operational. Both nodes claim the VIP. Routing becomes unpredictable.</p>
+<p>Configuration drift between the two nodes is the most common source of problems. When a firewall rule is added to oak02ufw01, it must be added to oak03ufw01. Automation (Ansible) reduces drift but does not eliminate it. The Ansible playbook must be applied to both nodes, and the application must be verified.</p>
 
-<p>Fencing mechanisms prevent split-brain. STONITH (Shoot The Other Node In The Head) forcibly powers off the failed node. This requires IPMI or similar out-of-band management. The Sophos hardware lacks IPMI.</p>
+<p>conntrackd state synchronisation adds CPU overhead. Under normal load, the Atom C2358 handles it without issue. Under stress testing (high connection rates), CPU usage increases noticeably. This is not a problem in practice but is worth monitoring.</p>
 
-<p>Without fencing, split-brain requires manual intervention. Monitoring detects the condition. An operator investigates and resolves it.</p>
+<p>The 3-second failover time is acceptable for most use cases. SSH sessions survive. HTTP connections that use TCP keepalives survive. Short-lived connections (DNS, UDP) may fail and retry. Applications that do not handle transient failures gracefully will exhibit errors during failover. This is a property of the application, not the HA setup.</p>
 
-<p>conntrackd state synchronization has overhead. High connection rates increase CPU usage. The Atom CPU handles moderate loads but struggles under stress testing.</p>
-
-<h2>Lessons Learned</h2>
-
-<p>HA adds complexity. Two devices require twice the maintenance. Configuration drift between nodes breaks failover. Automation (Ansible) reduces drift but doesn't eliminate it.</p>
-
-<p>Testing failover regularly matters. Untested HA is unreliable HA. Scheduled failover tests validate the configuration and build confidence.</p>
-
-<p>HA doesn't eliminate all failure modes. It handles node failures. It doesn't handle configuration errors, software bugs, or upstream network failures. HA is one tool, not a complete solution.</p>
-
-<p>For a home lab, HA is educational but not essential. The learning value justifies the complexity. For production, HA is a requirement, not an option.</p>
-
-<h2>Future Work</h2>
-
-<p>Testing active-active configurations where both firewalls handle traffic simultaneously. This requires more complex routing and load balancing.</p>
-
-<p>Integrating with monitoring to automatically trigger failover based on health checks, not just keepalived advertisements.</p>
-
-<p>Exploring alternatives to keepalived: pacemaker, corosync, or custom scripts.</p>
-
-<h2>Related Devices</h2>
+<h2>Related</h2>
 
 <ul>
-<li><a href="oak02ufw01.html">oak02ufw01</a> - Primary firewall in HA pair</li>
-<li><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> - Hardware platform</li>
+<li><a href="oak02ufw01.html">oak02ufw01</a> &mdash; Primary firewall (VRRP master)</li>
+<li><a href="../types/sophos-sg-210v3.html">Sophos SG 210v3</a> &mdash; Hardware platform</li>
+<li><a href="../../lab-networking.html">Networking</a> &mdash; VLAN topology and firewall policy</li>
+<li><a href="../../writing.html#ha-tradeoff">Writing: High Availability is a Trade-off</a></li>
 </ul>
-
-</main>
-
-<hr>
-
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
 
 </div>
 
-<script src="../../enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="../../lab.html">Lab</a> &mdash; <a href="../../index.html">Home</a></p>
+</div>
+
+</div>
+<script src="../../enhance.js" type="text/javascript"></script>
 </body>
 </html>

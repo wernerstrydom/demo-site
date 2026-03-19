@@ -2,190 +2,212 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>oak02ufw01 - Werner Strydom</title>
-<meta name="description" content="Ubuntu firewall deployment on Sophos SG 210 hardware">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="oak02ufw01 — primary firewall, Sophos SG 210v3, Ubuntu 24.04, VRRP master.">
+<title>oak02ufw01 &mdash; Devices &mdash; Lab &mdash; Werner Strydom</title>
 <link rel="stylesheet" href="../../styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
+<div class="site-header">
 <h1>oak02ufw01</h1>
-</header>
+<p class="tagline">Primary firewall. VRRP master.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="../../index.html">Home</a></li>
 <li><a href="../../writing.html">Writing</a></li>
 <li><a href="../../lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<h2>Overview</h2>
+<p class="breadcrumb"><a href="../../lab.html">Lab</a> &rsaquo; <a href="../../lab-devices.html">Devices</a> &rsaquo; oak02ufw01</p>
 
-<p>oak02ufw01 is an Ubuntu-based firewall running on <a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> hardware. It replaced the EOL Sophos UTM firmware. The device provides routing, firewall, and VPN services for the lab network.</p>
+<h2>Identity</h2>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table border="1" cellpadding="6" cellspacing="0" class="info-table">
+<tr><td>Hostname</td><td>oak02ufw01.lab.internal</td></tr>
+<tr><td>Hardware</td><td><a href="../types/sophos-sg-210v3.html">Sophos SG 210v3</a></td></tr>
+<tr><td>OS</td><td>Ubuntu Server 24.04 LTS</td></tr>
+<tr><td>Role</td><td>Primary firewall, inter-VLAN routing, VRRP master</td></tr>
+<tr><td>Management IP</td><td>10.0.10.21 (VLAN 10)</td></tr>
+<tr><td>VRRP priority</td><td>100 (master)</td></tr>
+<tr><td>Deployed</td><td>2024-11-15</td></tr>
+<tr><td>Status</td><td><span class="status-operational">Operational</span></td></tr>
+</table>
+
+<h2>Role and rationale</h2>
+
+<p>oak02ufw01 is the primary firewall for the lab. It handles inter-VLAN routing, stateful packet filtering, and NAT for outbound internet access. It is the VRRP master for all VLAN gateway virtual IPs.</p>
+
+<p>The choice of Ubuntu on bare metal rather than a dedicated firewall distribution (pfSense, OPNsense, VyOS) is deliberate. Ubuntu provides a well-understood base, standard tooling, and a long support lifecycle. The firewall rules are managed with nftables. The VRRP failover is managed with keepalived. Connection state synchronisation uses conntrackd. Each component is a standard Linux tool with extensive documentation.</p>
+
+<p>The trade-off: a dedicated firewall distribution provides a GUI and pre-configured defaults. Ubuntu requires manual configuration of each component. For a lab environment where the goal is understanding, manual configuration is the point. For a production environment where operational simplicity matters, a dedicated distribution may be the better choice.</p>
+
+<h2>Network interfaces</h2>
+
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>Property</th>
-<th>Value</th>
+<th>Interface</th>
+<th>VLAN</th>
+<th>IP address</th>
+<th>Role</th>
 </tr>
 <tr>
-<td>Hostname</td>
-<td>oak02ufw01.lab</td>
+<td>enp1s0</td>
+<td>10 (Management)</td>
+<td>10.0.10.21/24</td>
+<td>Management (physical)</td>
 </tr>
 <tr>
-<td>Hardware</td>
-<td><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a></td>
+<td>enp1s0.20</td>
+<td>20 (Production)</td>
+<td>10.0.20.21/24</td>
+<td>Production gateway (physical)</td>
 </tr>
 <tr>
-<td>OS</td>
-<td>Ubuntu Server 24.04 LTS</td>
+<td>enp1s0.30</td>
+<td>30 (Lab)</td>
+<td>10.0.30.21/24</td>
+<td>Lab gateway (physical)</td>
 </tr>
 <tr>
-<td>Role</td>
-<td>Primary firewall/router</td>
+<td>enp1s0.40</td>
+<td>40 (Vintage)</td>
+<td>10.0.40.21/24</td>
+<td>Vintage gateway (physical)</td>
 </tr>
 <tr>
-<td>Management IP</td>
-<td>10.0.10.21</td>
+<td>enp1s0.50</td>
+<td>50 (IoT)</td>
+<td>10.0.50.21/24</td>
+<td>IoT gateway (physical)</td>
 </tr>
 <tr>
-<td>Deployed</td>
-<td>2024-11-15</td>
+<td>enp1s1</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>VRRP/conntrackd sync link (direct to oak03ufw01)</td>
 </tr>
 </table>
 
-<h2>Motivation</h2>
+<p>Virtual IPs (VRRP, shared with oak03ufw01):</p>
 
-<p>The Sophos SG 210 reached EOL in 2021. No security updates. The hardware remained functional. Replacing the proprietary firmware with Ubuntu provided current security patches and full control over configuration.</p>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr>
+<th>VIP</th>
+<th>VLAN</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>10.0.10.1</td>
+<td>10 (Management)</td>
+<td>Management VLAN default gateway</td>
+</tr>
+<tr>
+<td>10.0.20.1</td>
+<td>20 (Production)</td>
+<td>Production VLAN default gateway</td>
+</tr>
+<tr>
+<td>10.0.30.1</td>
+<td>30 (Lab)</td>
+<td>Lab VLAN default gateway</td>
+</tr>
+<tr>
+<td>10.0.40.1</td>
+<td>40 (Vintage)</td>
+<td>Vintage VLAN default gateway</td>
+</tr>
+<tr>
+<td>10.0.50.1</td>
+<td>50 (IoT)</td>
+<td>IoT VLAN default gateway</td>
+</tr>
+</table>
 
-<p>This deployment served as a learning exercise. Commercial firewall appliances abstract configuration behind web interfaces. Building a firewall from Ubuntu exposed the underlying mechanisms: iptables/nftables, routing tables, network namespaces, and kernel parameters.</p>
+<h2>VRRP configuration</h2>
 
-<p>The goal was understanding how firewalls work, not just how to configure them.</p>
-
-<h2>Installation</h2>
-
-<p>Ubuntu Server 24.04 LTS installed via USB. The Sophos hardware uses standard BIOS. Boot from USB, select the mSATA SSD as the installation target. The installer detected all 8 network interfaces.</p>
-
-<p>Network interface naming used predictable names (enp2s0, enp3s0, etc.). Netplan configuration mapped interfaces to VLANs. The WAN interface connected to the ISP router. LAN interfaces connected to the managed switch.</p>
-
-<h2>Network Configuration</h2>
-
-<p>The firewall bridges multiple VLANs. Netplan defines bridge interfaces. Each VLAN gets a bridge. The firewall acts as the default gateway for each VLAN.</p>
-
-<p>Example Netplan configuration for VLAN 20:</p>
-
-<pre>
-network:
-  version: 2
-  ethernets:
-    enp2s0:
-      dhcp4: false
-  bridges:
-    br20:
-      interfaces: [enp2s0]
-      addresses: [10.0.20.1/24]
-      parameters:
-        stp: false
-</pre>
-
-<p>IP forwarding enabled via sysctl. The kernel routes packets between VLANs based on firewall rules.</p>
-
-<h2>Firewall Rules</h2>
-
-<p>nftables replaced iptables. The ruleset uses tables, chains, and rules. The configuration file lives at <code>/etc/nftables.conf</code>.</p>
-
-<p>Default policy: drop all traffic. Explicit allow rules for permitted traffic. Stateful connection tracking reduces rule complexity. Established connections bypass most rules.</p>
-
-<p>Example rule allowing VLAN 20 to access the internet:</p>
+<p>keepalived manages VRRP. oak02ufw01 is the master with priority 100. oak03ufw01 is the backup with priority 90. Failover occurs within 3 seconds of master failure (3 &times; advert_int of 1 second).</p>
 
 <pre>
-table inet filter {
-  chain forward {
-    type filter hook forward priority 0; policy drop;
-    
-    iifname "br20" oifname "wan0" ct state new,established,related accept
-    iifname "wan0" oifname "br20" ct state established,related accept
-  }
+vrrp_instance VI_MGMT {
+    state MASTER
+    interface enp1s0
+    virtual_router_id 10
+    priority 100
+    advert_int 1
+    virtual_ipaddress {
+        10.0.10.1/24
+    }
+}
+
+vrrp_instance VI_PROD {
+    state MASTER
+    interface enp1s0.20
+    virtual_router_id 20
+    priority 100
+    advert_int 1
+    virtual_ipaddress {
+        10.0.20.1/24
+    }
 }
 </pre>
 
-<p>Inter-VLAN rules restrict traffic. Management VLAN cannot be reached from other VLANs. IoT VLAN has no inbound access.</p>
+<p>Additional VRRP instances follow the same pattern for VLANs 30, 40, and 50.</p>
 
-<h2>NAT Configuration</h2>
+<h2>Connection state synchronisation</h2>
 
-<p>Source NAT (SNAT) translates internal IPs to the WAN IP. nftables handles this in the nat table:</p>
+<p>conntrackd synchronises the netfilter connection tracking table between oak02ufw01 and oak03ufw01 over the dedicated sync link (enp1s1). When failover occurs, established connections continue without interruption on the new master.</p>
 
-<pre>
-table inet nat {
-  chain postrouting {
-    type nat hook postrouting priority 100;
-    oifname "wan0" masquerade
-  }
-}
-</pre>
+<p>Configuration at <code>/etc/conntrackd/conntrackd.conf</code>. State is exchanged over UDP multicast on the sync network (192.168.100.0/30). oak02ufw01 uses 192.168.100.1; oak03ufw01 uses 192.168.100.2.</p>
 
-<p>Port forwarding uses destination NAT (DNAT). External ports map to internal services. Example: external port 2222 forwards to internal SSH on port 22.</p>
+<h2>Firewall rules</h2>
 
-<h2>VPN</h2>
+<p>Firewall rules are managed with nftables. The ruleset is version-controlled in the internal git server. Rules are applied via a systemd service that loads the ruleset at boot.</p>
 
-<p>WireGuard provides VPN access. Configuration at <code>/etc/wireguard/wg0.conf</code>. The VPN subnet is 10.0.100.0/24. Clients receive IPs via static assignment.</p>
+<p>The policy is default-deny for inter-VLAN traffic. Permitted flows are explicitly allowed. Internet access for the Production VLAN is permitted via NAT masquerade. The IoT VLAN has internet access only; no inter-VLAN access.</p>
 
-<p>VPN traffic routes through the firewall. Clients access internal VLANs based on firewall rules. Split tunneling sends only internal traffic through the VPN. Internet traffic uses the client's local connection.</p>
+<h2>Maintenance notes</h2>
 
-<h2>DNS</h2>
+<p>Before performing maintenance on oak02ufw01, verify that oak03ufw01 is operational and that VRRP failover works. Procedure:</p>
 
-<p>Unbound runs on the firewall. It provides DNS for internal VLANs. Local zone maps internal hostnames. Upstream queries forward to Cloudflare DNS over TLS.</p>
+<ol>
+<li>SSH to oak03ufw01. Verify keepalived is running: <code>systemctl status keepalived</code>.</li>
+<li>On oak02ufw01, stop keepalived: <code>systemctl stop keepalived</code>. oak03ufw01 should assume the VIPs within 3 seconds.</li>
+<li>Verify failover: ping 10.0.20.1 from a Production VLAN device. Verify connectivity continues.</li>
+<li>Perform maintenance on oak02ufw01.</li>
+<li>Restart keepalived on oak02ufw01: <code>systemctl start keepalived</code>. oak02ufw01 will preempt oak03ufw01 and resume as master.</li>
+</ol>
 
-<p>Ad blocking uses a blocklist. Unbound returns NXDOMAIN for blocked domains. The list updates weekly via cron.</p>
+<div class="note">
+<strong>Warning:</strong> Do not perform maintenance on both firewalls simultaneously. If both are unavailable, all inter-VLAN routing and internet access fails. There is no third node.
+</div>
 
-<h2>Monitoring</h2>
-
-<p>Prometheus node_exporter exposes system metrics. Grafana visualizes CPU, memory, network throughput, and connection counts. Alerts trigger on high CPU or connection table exhaustion.</p>
-
-<p>Logs go to journald. Critical events forward to a central syslog server. Log rotation prevents disk exhaustion.</p>
-
-<h2>Challenges</h2>
-
-<p>Network interface naming was inconsistent across reboots initially. Netplan configuration used MAC addresses to ensure stable naming. This fixed the issue.</p>
-
-<p>nftables syntax differs from iptables. The transition required reading the nftables wiki and testing rules in a VM before deploying to production.</p>
-
-<p>Connection tracking table size needed tuning. Default limits were too low for the number of concurrent connections. Increased <code>net.netfilter.nf_conntrack_max</code> via sysctl.</p>
-
-<h2>Lessons Learned</h2>
-
-<p>Building a firewall from scratch clarifies what commercial appliances abstract. NAT, routing, and firewall rules are kernel features. The appliance provides a configuration interface and management tools.</p>
-
-<p>Ubuntu provides the same capabilities. The tradeoff is manual configuration versus vendor support. For a lab environment, the learning value outweighs the convenience of a turnkey solution.</p>
-
-<p>Documentation matters. Runbooks for common tasks reduce troubleshooting time. Configuration files need comments explaining non-obvious choices.</p>
-
-<h2>Related Devices</h2>
+<h2>Related</h2>
 
 <ul>
-<li><a href="oak03ufw01.html">oak03ufw01</a> - Secondary firewall for HA testing</li>
-<li><a href="../types/sophos-sg-210v3.html">Sophos SG 210 rev.3</a> - Hardware platform</li>
+<li><a href="oak03ufw01.html">oak03ufw01</a> &mdash; Secondary firewall (VRRP backup)</li>
+<li><a href="../types/sophos-sg-210v3.html">Sophos SG 210v3</a> &mdash; Hardware platform</li>
+<li><a href="../../lab-networking.html">Networking</a> &mdash; VLAN topology and firewall policy</li>
 </ul>
-
-</main>
-
-<hr>
-
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
 
 </div>
 
-<script src="../../enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="../../lab.html">Lab</a> &mdash; <a href="../../index.html">Home</a></p>
+</div>
+
+</div>
+<script src="../../enhance.js" type="text/javascript"></script>
 </body>
 </html>

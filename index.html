@@ -2,58 +2,74 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Werner Strydom</title>
-<meta name="description" content="Technical writing on infrastructure, security, compliance, and systems engineering">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Werner Strydom — homelab documentation, experiments, and opinions on technology, trade-offs, and engineering.">
+<title>Werner Strydom</title>
 <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
+<div class="site-header">
 <h1>Werner Strydom</h1>
-</header>
+<p class="tagline">Homelab. Experiments. Opinions. Trade-offs.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="writing.html">Writing</a></li>
 <li><a href="lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<p>This site works on browsers from 1999 onwards. It uses progressive enhancement: semantic HTML, layered CSS, optional JavaScript. No frameworks, no build tools, no tracking.</p>
+<p>This site documents a homelab, ongoing experiments, and opinions on technology and engineering. The goal is not to provide answers, but to surface trade-offs — the uncomfortable reality that every decision in engineering has a cost, and understanding that cost is the job.</p>
 
-<p>I write about infrastructure, security, compliance, and systems engineering. The focus is on connecting dots between systems and understanding why outcomes don't match intentions.</p>
+<p>If you are looking for a tutorial that tells you what to do, this is the wrong place. If you are looking for a place that asks why, and what happens when things go wrong, read on.</p>
 
-<h2>What You'll Find</h2>
+<h2>What is here</h2>
 
-<p><strong>Writing</strong> contains technical opinions and analysis. Topics include automation, configuration management, security practices, and the gap between theory and implementation. The goal is helping readers trace connections between systems.</p>
+<table border="1" cellpadding="8" cellspacing="0">
+<tr>
+<th>Section</th>
+<th>Description</th>
+</tr>
+<tr>
+<td><a href="writing.html">Writing</a></td>
+<td>Essays and opinions on technology, systems design, and the consequences of engineering choices. Focused on trade-offs, not tutorials.</td>
+</tr>
+<tr>
+<td><a href="lab.html">Lab</a></td>
+<td>Documentation for the homelab: hardware inventory, device configurations, network topology, and naming conventions. Precise and direct.</td>
+</tr>
+</table>
 
-<p><strong>Lab</strong> documents hardware, network topology, and infrastructure projects. The content focuses on what release, infrastructure, security, and systems engineers would find useful.</p>
+<h2>Philosophy</h2>
 
-<h2>Technical Notes</h2>
+<p>Most technical writing teaches you what to do. This site tries to teach you how to think about what to do. There is a difference. The first produces engineers who follow recipes. The second produces engineers who can reason under uncertainty.</p>
 
-<p>This site uses HTML 4.01 Transitional for maximum compatibility. CSS applies progressive enhancement through @supports queries. JavaScript is minimal and optional. The site works without CSS or JavaScript.</p>
+<p>The homelab exists as a consequence of this philosophy. Running real hardware — including hardware that is end-of-life, architecturally diverse, and resource-constrained — forces you to confront assumptions that modern cloud environments paper over. When your firewall is a repurposed Sophos appliance running Ubuntu on an Intel Atom, you learn what the abstractions are hiding.</p>
 
-<p>Modern browsers get responsive layouts, custom properties, and smooth transitions. Older browsers get clean, readable text with basic formatting. Both experiences are intentional.</p>
+<h2>On this site</h2>
 
-</main>
+<p>This site is built with progressive enhancement. It works on browsers from the year 2000 onwards. It works without JavaScript. It works without CSS. The content is the point. The technology serves the content, not the other way around.</p>
 
-<hr>
-
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
+<p>This is also a deliberate choice with a point: a website that requires a modern browser to read text is a website that has confused its means for its ends. The same confusion appears throughout engineering. Recognising it is the first step.</p>
 
 </div>
 
-<script src="enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="https://github.com/wernerstrydom/demo-site">Source</a></p>
+</div>
+
+</div>
+<script src="enhance.js" type="text/javascript"></script>
 </body>
 </html>

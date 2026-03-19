@@ -2,95 +2,155 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Networking - Werner Strydom</title>
-<meta name="description" content="Lab network topology and configuration">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Network topology, VLAN assignments, and routing for the homelab.">
+<title>Networking &mdash; Lab &mdash; Werner Strydom</title>
 <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
+<div class="site-header">
 <h1>Networking</h1>
-</header>
+<p class="tagline">Topology, VLANs, and routing.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="index.html">Home</a></li>
 <li><a href="writing.html">Writing</a></li>
 <li><a href="lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<h2>Topology</h2>
+<p class="breadcrumb"><a href="lab.html">Lab</a> &rsaquo; Networking</p>
 
-<p>The network uses VLANs for segmentation. A managed switch handles VLAN tagging. Ubuntu-based firewalls (<a href="lab/devices/oak02ufw01.html">oak02ufw01</a>, <a href="lab/devices/oak03ufw01.html">oak03ufw01</a>) provide routing, firewall, and VPN.</p>
+<p>The lab network is segmented into VLANs by trust level and function. Each VLAN has a defined subnet, default gateway, and firewall policy. Inter-VLAN routing is handled by the firewall pair.</p>
 
-<h2>VLANs</h2>
+<h2>VLAN assignments</h2>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>VLAN</th>
+<th>VLAN ID</th>
+<th>Name</th>
 <th>Subnet</th>
+<th>Default gateway</th>
 <th>Purpose</th>
 </tr>
 <tr>
 <td>10</td>
+<td>Management</td>
 <td>10.0.10.0/24</td>
-<td>Management (IPMI, iDRAC)</td>
+<td>10.0.10.1</td>
+<td>Out-of-band management. Servers, switches, firewall management interfaces.</td>
 </tr>
 <tr>
 <td>20</td>
+<td>Production</td>
 <td>10.0.20.0/24</td>
-<td>Production workloads</td>
+<td>10.0.20.1</td>
+<td>Primary network. Trusted devices, daily-use machines.</td>
 </tr>
 <tr>
 <td>30</td>
+<td>Lab</td>
 <td>10.0.30.0/24</td>
-<td>Lab and testing</td>
+<td>10.0.30.1</td>
+<td>Isolated experiment network. VMs, containers, test services.</td>
 </tr>
 <tr>
 <td>40</td>
+<td>Vintage</td>
 <td>10.0.40.0/24</td>
-<td>Vintage systems</td>
+<td>10.0.40.1</td>
+<td>Legacy hardware (PowerPC, MIPS, SPARC). Restricted outbound access.</td>
 </tr>
 <tr>
 <td>50</td>
+<td>IoT</td>
 <td>10.0.50.0/24</td>
-<td>IoT devices</td>
+<td>10.0.50.1</td>
+<td>IoT devices. No inbound access from other VLANs. Internet access only.</td>
 </tr>
 </table>
 
-<p>Firewall rules restrict inter-VLAN traffic. Management VLAN is isolated. IoT VLAN has no inbound access from other VLANs. Lab VLAN can initiate connections but receives no unsolicited traffic.</p>
+<h2>Firewall policy summary</h2>
 
-<h2>Services</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr>
+<th>Source VLAN</th>
+<th>Destination VLAN</th>
+<th>Policy</th>
+<th>Notes</th>
+</tr>
+<tr>
+<td>Management</td>
+<td>All</td>
+<td>Allow (restricted)</td>
+<td>SSH, SNMP, HTTPS only. No general traffic.</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Management</td>
+<td>Deny</td>
+<td>Production devices cannot reach management interfaces.</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>Lab</td>
+<td>Allow (restricted)</td>
+<td>Specific ports only. Reviewed per-service.</td>
+</tr>
+<tr>
+<td>Lab</td>
+<td>Production</td>
+<td>Deny</td>
+<td>Lab traffic cannot reach production by default.</td>
+</tr>
+<tr>
+<td>Vintage</td>
+<td>Production</td>
+<td>Deny</td>
+<td>Vintage machines are untrusted. No access to production.</td>
+</tr>
+<tr>
+<td>IoT</td>
+<td>Any internal</td>
+<td>Deny</td>
+<td>IoT devices have internet access only.</td>
+</tr>
+</table>
 
-<p><strong>DNS:</strong> Unbound with local zone for internal names. Forwards to upstream resolvers over TLS. Blocks ad domains.</p>
+<h2>Firewall HA</h2>
 
-<p><strong>DHCP:</strong> ISC DHCP with static reservations. Network boot support via PXE. Option 66 points to TFTP server.</p>
+<p>The firewall pair (<a href="lab/devices/oak02ufw01.html">oak02ufw01</a> and <a href="lab/devices/oak03ufw01.html">oak03ufw01</a>) uses VRRP for gateway failover. Each VLAN has a virtual IP (VIP) that floats between the two nodes. keepalived manages VRRP. conntrackd synchronises connection state.</p>
 
-<p><strong>Monitoring:</strong> Prometheus scrapes exporters on each system. Grafana visualizes metrics. Alertmanager sends notifications.</p>
+<p>The VRRP virtual IPs are the .1 addresses in each subnet (e.g., 10.0.20.1 for the Production VLAN). The physical management IPs for the firewall nodes are 10.0.10.21 (oak02ufw01) and 10.0.10.22 (oak03ufw01).</p>
 
-<p><strong>Storage:</strong> ZFS on Server 1 provides network storage via NFS and SMB. Snapshots run hourly. Replication to external drive runs daily.</p>
+<div class="note">
+<strong>Trade-off:</strong> VRRP failover eliminates single-node downtime but introduces split-brain risk. See <a href="writing.html#ha-tradeoff">High Availability is a Trade-off, Not a Feature</a> for a full analysis.
+</div>
 
-<p><strong>VPN:</strong> WireGuard for remote access. Split tunnel configuration. DNS pushed to clients.</p>
+<h2>DNS</h2>
 
-</main>
+<p>Internal DNS is served by a resolver on the Management VLAN. The domain <code>lab.internal</code> is used for internal hostnames. All devices have A records. PTR records are maintained for all static IPs.</p>
 
-<hr>
-
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
+<p>Upstream DNS uses a resolver with filtering (Pi-hole). The filtering list is reviewed quarterly. Filtering is applied to the Production and IoT VLANs. The Lab and Vintage VLANs use unfiltered upstream DNS to avoid interference with experiments.</p>
 
 </div>
 
-<script src="enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="lab.html">Lab</a> &mdash; <a href="index.html">Home</a></p>
+</div>
+
+</div>
+<script src="enhance.js" type="text/javascript"></script>
 </body>
 </html>

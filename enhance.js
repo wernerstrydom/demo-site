@@ -1,228 +1,109 @@
 /*
- * Progressive Enhancement JavaScript
- * This script provides optional enhancements for browsers that support JavaScript.
- * The site remains fully functional without it.
+ * enhance.js — Progressive Enhancement Layer
+ *
+ * This script is entirely optional. The site must be 100% functional without it.
+ * All features are gated behind explicit capability checks.
+ *
+ * Compatible with: IE 6+, Firefox 2+, and all modern browsers.
  */
-
-(function() {
+(function () {
     'use strict';
-    
-    // Feature detection helper
-    function supportsFeature(feature) {
-        try {
-            switch(feature) {
-                case 'querySelector':
-                    return typeof document.querySelector === 'function';
-                case 'addEventListener':
-                    return typeof document.addEventListener === 'function';
-                case 'classList':
-                    return 'classList' in document.documentElement;
-                case 'localStorage':
-                    return typeof localStorage !== 'undefined';
-                case 'smoothScroll':
-                    return 'scrollBehavior' in document.documentElement.style;
-                default:
-                    return false;
-            }
-        } catch(e) {
-            return false;
-        }
+
+    function supports(feature) {
+        var tests = {
+            querySelectorAll: typeof document.querySelectorAll !== 'undefined',
+            addEventListener:  typeof document.addEventListener !== 'undefined',
+            classList:         typeof document.documentElement.classList !== 'undefined',
+            localStorage:      (function () { try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return true; } catch (e) { return false; } }()),
+            cssVars:           typeof CSS !== 'undefined' && CSS.supports && CSS.supports('color', 'var(--color-bg)'),
+            smoothScroll:      'scrollBehavior' in document.documentElement.style
+        };
+        return tests[feature] || false;
     }
-    
-    // Only proceed if basic features are available
-    if (!supportsFeature('querySelector') || !supportsFeature('addEventListener')) {
-        return;
-    }
-    
-    // Add a class to indicate JavaScript is enabled
-    if (supportsFeature('classList')) {
-        document.documentElement.classList.add('js-enabled');
-    }
-    
-    // Smooth scrolling for anchor links (if not natively supported)
-    if (!supportsFeature('smoothScroll')) {
-        var links = document.querySelectorAll('a[href^="#"]');
-        for (var i = 0; i < links.length; i++) {
-            links[i].addEventListener('click', function(e) {
-                var target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    e.preventDefault();
-                    smoothScrollTo(target);
-                }
-            });
+
+    if (!supports('querySelectorAll') || !supports('addEventListener')) { return; }
+
+    function initTheme() {
+        if (!supports('cssVars') || !supports('localStorage')) { return; }
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-theme', saved);
         }
-    }
-    
-    function smoothScrollTo(element) {
-        var start = window.pageYOffset;
-        var target = element.offsetTop;
-        var distance = target - start;
-        var duration = 500;
-        var startTime = null;
-        
-        function animation(currentTime) {
-            if (startTime === null) startTime = currentTime;
-            var timeElapsed = currentTime - startTime;
-            var progress = Math.min(timeElapsed / duration, 1);
-            
-            // Easing function
-            var ease = progress < 0.5 
-                ? 2 * progress * progress 
-                : -1 + (4 - 2 * progress) * progress;
-            
-            window.scrollTo(0, start + distance * ease);
-            
-            if (timeElapsed < duration) {
-                requestAnimationFrame(animation);
-            }
-        }
-        
-        if (typeof requestAnimationFrame === 'function') {
-            requestAnimationFrame(animation);
-        } else {
-            window.scrollTo(0, target);
-        }
-    }
-    
-    // Theme switcher (optional enhancement)
-    function initThemeSwitcher() {
-        if (!supportsFeature('localStorage')) {
-            return;
-        }
-        
-        // Check for saved theme preference
-        var savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        }
-        
-        // Create theme toggle button
-        var button = document.createElement('button');
-        button.textContent = 'Toggle Theme';
-        button.style.cssText = 'position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: sans-serif; font-size: 14px; z-index: 1000;';
-        
-        button.addEventListener('click', function() {
-            var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            var newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
+        var btn = document.createElement('button');
+        btn.id = 'theme-toggle';
+        btn.setAttribute('aria-label', 'Toggle dark/light theme');
+        btn.innerHTML = 'Toggle Theme';
+        btn.addEventListener('click', function () {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next;
+            if (current === 'dark') { next = 'light'; }
+            else if (current === 'light') { next = 'dark'; }
+            else { next = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'light' : 'dark'; }
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
         });
-        
-        // Only add button if CSS custom properties are supported
-        if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('color', 'var(--color-primary)')) {
-            document.body.appendChild(button);
-        }
+        document.body.appendChild(btn);
     }
-    
-    function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
+
+    function initBackToTop() {
+        if (!supports('cssVars')) { return; }
+        var btn = document.createElement('button');
+        btn.id = 'back-to-top';
+        btn.setAttribute('aria-label', 'Back to top of page');
+        btn.innerHTML = '&#8679; Top';
+        btn.addEventListener('click', function () {
+            if (supports('smoothScroll')) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            else { window.scrollTo(0, 0); }
+        });
+        window.addEventListener('scroll', function () {
+            btn.style.opacity = (window.pageYOffset > 400) ? '1' : '0';
+        });
+        document.body.appendChild(btn);
     }
-    
-    // External link indicator
-    function markExternalLinks() {
-        var links = document.querySelectorAll('a[href^="http"]');
+
+    function enhanceExternalLinks() {
+        var links = document.querySelectorAll('a[href]');
+        var host = window.location.hostname;
         for (var i = 0; i < links.length; i++) {
             var link = links[i];
-            if (link.hostname !== window.location.hostname) {
+            var href = link.getAttribute('href') || '';
+            if (/^https?:\/\//i.test(href) && href.indexOf(host) === -1) {
                 link.setAttribute('rel', 'noopener noreferrer');
                 link.setAttribute('target', '_blank');
-                
-                // Add visual indicator if classList is supported
-                if (supportsFeature('classList')) {
-                    link.classList.add('external-link');
-                }
+                if (supports('classList')) { link.classList.add('external-link'); }
             }
         }
     }
-    
-    // Back to top button
-    function initBackToTop() {
-        var button = document.createElement('button');
-        button.textContent = '↑ Top';
-        button.style.cssText = 'position: fixed; bottom: 20px; left: 20px; padding: 10px 15px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; font-family: sans-serif; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 1000;';
-        button.setAttribute('aria-label', 'Back to top');
-        
-        button.addEventListener('click', function() {
-            if (supportsFeature('smoothScroll')) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                smoothScrollTo(document.body);
-            }
-        });
-        
-        // Show/hide button based on scroll position
-        function toggleButton() {
-            if (window.pageYOffset > 300) {
-                button.style.opacity = '1';
-            } else {
-                button.style.opacity = '0';
-            }
-        }
-        
-        window.addEventListener('scroll', toggleButton);
-        document.body.appendChild(button);
-    }
-    
-    // Form validation enhancement (if forms exist)
-    function enhanceForms() {
-        var forms = document.querySelectorAll('form');
-        for (var i = 0; i < forms.length; i++) {
-            forms[i].addEventListener('submit', function(e) {
-                var inputs = this.querySelectorAll('input[required], textarea[required]');
-                var valid = true;
-                
-                for (var j = 0; j < inputs.length; j++) {
-                    if (!inputs[j].value.trim()) {
-                        valid = false;
-                        if (supportsFeature('classList')) {
-                            inputs[j].classList.add('error');
-                        }
-                    }
-                }
-                
-                if (!valid) {
-                    e.preventDefault();
-                    alert('Please fill in all required fields.');
-                }
-            });
-        }
-    }
-    
-    // Print-friendly enhancements
+
     function enhancePrint() {
-        window.addEventListener('beforeprint', function() {
-            // Expand any collapsed sections before printing
+        window.addEventListener('beforeprint', function () {
             var details = document.querySelectorAll('details');
-            for (var i = 0; i < details.length; i++) {
-                details[i].setAttribute('open', 'open');
-            }
+            for (var i = 0; i < details.length; i++) { details[i].setAttribute('open', 'open'); }
         });
     }
-    
-    // Initialize enhancements when DOM is ready
+
+    function markCurrentPage() {
+        var path = window.location.pathname;
+        var filename = path.split('/').pop() || 'index.html';
+        var links = document.querySelectorAll('.site-nav a');
+        for (var i = 0; i < links.length; i++) {
+            var href = links[i].getAttribute('href') || '';
+            if (href === filename || (filename === '' && href === 'index.html')) {
+                if (supports('classList')) { links[i].classList.add('current'); }
+                links[i].setAttribute('aria-current', 'page');
+            }
+        }
+    }
+
     function init() {
-        // Core enhancements
-        markExternalLinks();
-        enhanceForms();
+        markCurrentPage();
+        enhanceExternalLinks();
         enhancePrint();
-        
-        // Optional UI enhancements (only if CSS custom properties supported)
-        if (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('color', 'var(--color-primary)')) {
-            initBackToTop();
-            initThemeSwitcher();
-        }
-        
-        // Log that enhancements are active (for debugging)
-        if (typeof console !== 'undefined' && console.log) {
-            console.log('Progressive enhancements loaded');
-        }
+        initTheme();
+        initBackToTop();
+        if (typeof console !== 'undefined' && console.log) { console.log('Progressive enhancements active.'); }
     }
-    
-    // Wait for DOM to be ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-    
-})();
+
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); }
+    else { init(); }
+}());

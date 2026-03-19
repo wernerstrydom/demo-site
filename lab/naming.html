@@ -2,157 +2,187 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Device Naming Scheme - Werner Strydom</title>
-<meta name="description" content="Hostname naming convention for lab infrastructure">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Device naming scheme for the homelab: structure, rationale, and examples.">
+<title>Naming &mdash; Lab &mdash; Werner Strydom</title>
 <link rel="stylesheet" href="../styles.css" type="text/css">
 </head>
 <body>
-
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="container">
 
-<header>
-<h1>Device Naming Scheme</h1>
-</header>
+<div class="site-header">
+<h1>Naming</h1>
+<p class="tagline">Device naming scheme: structure, rationale, and examples.</p>
+</div>
 
-<nav>
+<div class="site-nav">
 <ul>
 <li><a href="../index.html">Home</a></li>
 <li><a href="../writing.html">Writing</a></li>
 <li><a href="../lab.html">Lab</a></li>
 </ul>
-</nav>
+</div>
 
 <hr>
 
-<main>
+<div class="site-main" id="main-content">
 
-<h2>Format</h2>
+<p class="breadcrumb"><a href="../lab.html">Lab</a> &rsaquo; Naming</p>
 
-<p>Hostnames follow the pattern: <code>location-number-function-sequence</code></p>
+<p>Device naming is a recurring topic in homelab and professional engineering communities. The choice of naming scheme is not merely aesthetic. It affects how quickly you can identify a device, understand its role, and locate it physically. A good naming scheme encodes useful information without requiring a lookup table.</p>
 
-<p>Example: <code>oak02ufw01</code></p>
+<h2>Scheme structure</h2>
 
-<ul>
-<li><strong>oak</strong> - Location code (Oakland)</li>
-<li><strong>02</strong> - Rack or zone number</li>
-<li><strong>ufw</strong> - Function code (Ubuntu firewall)</li>
-<li><strong>01</strong> - Sequence number for this function</li>
-</ul>
+<p>Hostnames follow this pattern:</p>
 
-<h2>Location Codes</h2>
+<pre>{site}{rack}{type}{seq}</pre>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>Code</th>
-<th>Location</th>
+<th>Component</th>
+<th>Length</th>
 <th>Description</th>
+<th>Example</th>
 </tr>
 <tr>
-<td>oak</td>
-<td>Oakland</td>
-<td>Primary lab location</td>
+<td><code>site</code></td>
+<td>3 chars</td>
+<td>Physical location identifier. Lowercase alpha. Derived from a location name.</td>
+<td><code>oak</code> (Oakland)</td>
+</tr>
+<tr>
+<td><code>rack</code></td>
+<td>2 digits</td>
+<td>Rack or physical grouping number. Zero-padded. 01&ndash;99.</td>
+<td><code>02</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>3 chars</td>
+<td>Device type abbreviation. Lowercase alpha. Encodes the primary role.</td>
+<td><code>ufw</code> (firewall)</td>
+</tr>
+<tr>
+<td><code>seq</code></td>
+<td>2 digits</td>
+<td>Sequence number within the type at that site/rack. Zero-padded. 01&ndash;99.</td>
+<td><code>01</code></td>
 </tr>
 </table>
 
-<h2>Function Codes</h2>
+<p>Full example: <code>oak02ufw01</code> = Oakland, rack 02, firewall, unit 01.</p>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<h2>Type abbreviations</h2>
+
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>Code</th>
-<th>Function</th>
-<th>Description</th>
+<th>Abbreviation</th>
+<th>Role</th>
+<th>Notes</th>
 </tr>
 <tr>
-<td>ufw</td>
-<td>Ubuntu Firewall</td>
-<td>Firewall/router running Ubuntu</td>
+<td><code>ufw</code></td>
+<td>Firewall</td>
+<td>From "uncomplicated firewall" (ufw), the Ubuntu firewall tool. Also a common abbreviation for network firewall.</td>
 </tr>
 <tr>
-<td>esxi</td>
-<td>ESXi Host</td>
-<td>VMware ESXi hypervisor</td>
+<td><code>srv</code></td>
+<td>General server</td>
+<td>Hypervisors, storage servers, and general-purpose compute.</td>
 </tr>
 <tr>
-<td>pve</td>
-<td>Proxmox VE</td>
-<td>Proxmox virtualization host</td>
+<td><code>dns</code></td>
+<td>DNS resolver</td>
+<td>Internal DNS and filtering.</td>
 </tr>
 <tr>
-<td>nas</td>
-<td>NAS</td>
-<td>Network attached storage</td>
+<td><code>mon</code></td>
+<td>Monitoring</td>
+<td>Prometheus, Grafana, alerting.</td>
 </tr>
 <tr>
-<td>sw</td>
-<td>Switch</td>
-<td>Network switch</td>
+<td><code>git</code></td>
+<td>Git server</td>
+<td>Internal source control.</td>
 </tr>
 <tr>
-<td>ap</td>
-<td>Access Point</td>
-<td>Wireless access point</td>
+<td><code>nas</code></td>
+<td>Network-attached storage</td>
+<td>ZFS-backed storage nodes.</td>
 </tr>
 </table>
 
 <h2>Rationale</h2>
 
-<p>This naming scheme provides immediate context about a device without requiring documentation lookup. The location code matters when you have multiple sites or plan to expand. The rack number helps with physical troubleshooting. The function code indicates the device's role. The sequence number distinguishes multiple devices with the same function.</p>
+<p>The naming scheme is designed to answer three questions at a glance:</p>
 
-<p>The scheme is deterministic. Given a device's purpose and location, the hostname is predictable. This reduces cognitive load when managing infrastructure.</p>
+<ol>
+<li><strong>Where is it?</strong> The site prefix identifies the physical location. In a multi-site lab, this prevents confusion between identically-named devices at different locations.</li>
+<li><strong>What is it?</strong> The type abbreviation identifies the primary role. You do not need to look up <code>oak02ufw01</code> to know it is a firewall.</li>
+<li><strong>Which one?</strong> The rack and sequence numbers distinguish between multiple devices of the same type. <code>oak02ufw01</code> and <code>oak03ufw01</code> are both firewalls, in different racks, both the first firewall in their respective rack.</li>
+</ol>
 
-<h2>Examples</h2>
+<h2>What the scheme does not encode</h2>
 
-<table border="1" cellpadding="5" cellspacing="0">
+<p>The scheme deliberately does not encode:</p>
+
+<ul>
+<li><strong>IP addresses.</strong> IP addresses change. Encoding them in hostnames creates maintenance burden and misleads when addresses are reassigned. Use DNS.</li>
+<li><strong>Hardware platform.</strong> Hardware is replaced. A hostname that encodes the hardware type becomes incorrect when the hardware changes. The device type (role) is stable; the hardware is not.</li>
+<li><strong>Operating system.</strong> Same reasoning as hardware. The role is stable; the OS may change.</li>
+</ul>
+
+<h2>Common alternatives and their trade-offs</h2>
+
+<table border="1" cellpadding="6" cellspacing="0">
 <tr>
-<th>Hostname</th>
-<th>Meaning</th>
+<th>Scheme</th>
+<th>Example</th>
+<th>Advantage</th>
+<th>Disadvantage</th>
 </tr>
 <tr>
-<td>oak02ufw01</td>
-<td>Oakland, rack 2, Ubuntu firewall, first instance</td>
+<td>Sequential numbers</td>
+<td><code>server01</code></td>
+<td>Simple. No encoding to remember.</td>
+<td>Tells you nothing. Requires a lookup for every device.</td>
 </tr>
 <tr>
-<td>oak02ufw02</td>
-<td>Oakland, rack 2, Ubuntu firewall, second instance</td>
+<td>Mythological names</td>
+<td><code>zeus</code>, <code>athena</code></td>
+<td>Memorable. No confusion with functional names.</td>
+<td>Tells you nothing. Does not scale. Runs out of memorable names.</td>
 </tr>
 <tr>
-<td>oak01esxi01</td>
-<td>Oakland, rack 1, ESXi host, first instance</td>
+<td>Role + number</td>
+<td><code>firewall01</code></td>
+<td>Role is clear. Simple.</td>
+<td>No location encoding. Ambiguous in multi-site environments.</td>
 </tr>
 <tr>
-<td>oak03nas01</td>
-<td>Oakland, rack 3, NAS, first instance</td>
+<td>This scheme</td>
+<td><code>oak02ufw01</code></td>
+<td>Encodes site, rack, role, and sequence. Scales.</td>
+<td>Less memorable than names. Requires learning the abbreviations.</td>
 </tr>
 </table>
 
-<h2>DNS Configuration</h2>
+<p>No naming scheme is universally correct. The right scheme depends on the scale of your environment, the number of people who need to use it, and how often you need to identify devices without access to documentation. The scheme documented here is appropriate for a single-site or small multi-site homelab with one operator. A larger environment would benefit from a more formal CMDB and a scheme that integrates with it.</p>
 
-<p>Internal DNS uses the <code>.lab</code> TLD. Full hostnames: <code>oak02ufw01.lab</code></p>
-
-<p>DNS A records point to management interfaces. CNAME records provide service-based aliases when needed.</p>
-
-<h2>Alternatives Considered</h2>
-
-<p>Random names (mythology, planets, etc.) are memorable but don't scale. They require documentation to understand a device's purpose. They work for small deployments but break down with growth.</p>
-
-<p>UUIDs or random strings are unique but not human-readable. They require constant documentation lookup.</p>
-
-<p>Descriptive names like "firewall-primary" don't handle multiples well and lack location context.</p>
-
-<p>The structured approach trades memorability for predictability and scalability.</p>
-
-</main>
-
-<hr>
-
-<footer>
-<p>Werner Strydom &copy; 2026</p>
-</footer>
+<div class="note">
+<strong>Opinion:</strong> Mythological or random-word naming schemes are fine for small personal environments where you know every machine by name. They fail at scale and when onboarding new operators. If you cannot tell what a machine does from its name, you have added a lookup step to every interaction with it. That cost is small per interaction and large in aggregate.
+</div>
 
 </div>
 
-<script src="../enhance.js" type="text/javascript"></script>
+<hr>
 
+<div class="site-footer">
+<p>Werner Strydom &mdash; <a href="../lab.html">Lab</a> &mdash; <a href="../index.html">Home</a></p>
+</div>
+
+</div>
+<script src="../enhance.js" type="text/javascript"></script>
 </body>
 </html>
